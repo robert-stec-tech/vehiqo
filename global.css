@@ -1,0 +1,20 @@
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/preflight.css' layer(base);
+@import 'tailwindcss/utilities.css';
+
+@import 'nativewind/theme';
+
+@theme {
+  --color-brand: #3b82f6;
+  --color-brand-dark: #2563eb;
+
+  --color-driving: #22c55e;
+  --color-working: #f59e0b;
+  --color-break: #3b82f6;
+  --color-rest: #8b5cf6;
+  --color-standby: #6b7280;
+
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --color-success: #22c55e;
+}
