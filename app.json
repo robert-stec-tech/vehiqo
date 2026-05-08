@@ -31,6 +31,9 @@
         "projectId": "ac84fddf-c173-4151-bae7-1b0c26d1f40c"
       }
     },
-    "owner": "robert-stec-tech"
+    "owner": "robert-stec-tech",
+    "plugins": [
+      "expo-localization"
+    ]
   }
 }

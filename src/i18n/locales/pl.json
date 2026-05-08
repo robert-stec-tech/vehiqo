@@ -1,0 +1,16 @@
+{
+  "tabs": {
+    "timer": "Czas pracy",
+    "dailyCheck": "Daily check",
+    "fatigue": "Zmęczenie",
+    "map": "Mapa",
+    "settings": "Ustawienia"
+  },
+  "common": {
+    "loading": "Ładowanie...",
+    "error": "Coś poszło nie tak",
+    "ok": "OK",
+    "cancel": "Anuluj",
+    "save": "Zapisz"
+  }
+}
