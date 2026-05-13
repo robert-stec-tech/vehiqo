@@ -37,7 +37,7 @@ export const SCHEMA_SQL = `
   CREATE TABLE IF NOT EXISTS daily_check_items (
     id TEXT PRIMARY KEY NOT NULL,
     daily_check_id TEXT NOT NULL REFERENCES daily_checks(id) ON DELETE CASCADE,
-    item_key TEXT NOT NULL,
+    item_key TEXT NOT NULL, -- i18n key resolved at runtime, e.g. 'dailyCheck.items.tyres'
     checked INTEGER NOT NULL DEFAULT 0 CHECK (checked IN (0, 1)),
     photo_uri TEXT,
     note TEXT,
@@ -47,8 +47,6 @@ export const SCHEMA_SQL = `
 
   CREATE INDEX IF NOT EXISTS idx_daily_check_items_check_id
     ON daily_check_items(daily_check_id);
-
-  -- item_key is an i18n key resolved at runtime, e.g. 'dailyCheck.items.tyres'
 
   CREATE TABLE IF NOT EXISTS fatigue_sessions (
     id TEXT PRIMARY KEY NOT NULL,
