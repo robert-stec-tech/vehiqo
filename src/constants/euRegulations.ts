@@ -1,3 +1,6 @@
+// All durations stored in milliseconds.
+// Legal references based on EU Regulation 561/2006.
+
 const HOUR_MS = 60 * 60 * 1000;
 const MINUTE_MS = 60 * 1000;
 
@@ -5,7 +8,7 @@ const MINUTE_MS = 60 * 1000;
 // Standard 9h. May be extended to 10h twice per week.
 export const MAX_DAILY_DRIVING_REGULAR_MS = 9 * HOUR_MS;
 export const MAX_DAILY_DRIVING_EXTENDED_MS = 10 * HOUR_MS;
-// Counted per calendar week (Mon 00:00 – Sun 24:00),
+// Counted per calendar week (Mon 00:00 – next Mon 00:00),
 // not per rolling 7-day window.
 export const MAX_EXTENDED_DAILY_DRIVES_PER_WEEK = 2;
 
@@ -14,8 +17,9 @@ export const MAX_WEEKLY_DRIVING_MS = 56 * HOUR_MS;
 export const MAX_BIWEEKLY_DRIVING_MS = 90 * HOUR_MS;
 
 // EU Regulation 561/2006 art. 7 — mandatory break after driving.
-// After 4.5h of continuous driving: 45 min break.
-// Allowed split: 15 + 30 min (ONLY in that order).
+// After 4.5h accumulated driving since last qualifying break/rest: 45 min break.
+// Allowed qualifying split: 15 + 30 min (strict order required by regulation).
+// Other splits (e.g. 30 + 15) are valid rest but do NOT satisfy art. 7.
 export const DRIVING_BEFORE_BREAK_MS = 4.5 * HOUR_MS;
 export const REQUIRED_BREAK_MS = 45 * MINUTE_MS;
 export const SPLIT_BREAK_FIRST_MS = 15 * MINUTE_MS;
@@ -28,8 +32,8 @@ export const SPLIT_BREAK_SECOND_MS = 30 * MINUTE_MS;
 export const DAILY_REST_REGULAR_MS = 11 * HOUR_MS;
 export const DAILY_REST_SPLIT_FIRST_MS = 3 * HOUR_MS;
 export const DAILY_REST_SPLIT_SECOND_MS = 9 * HOUR_MS;
-// Value coincidence with DAILY_REST_SPLIT_SECOND_MS is accidental
-// — different legal concepts (full reduced rest vs second segment of split regular rest).
+// Same numeric value as DAILY_REST_SPLIT_SECOND_MS,
+// but represents a different legal concept (full reduced rest vs second segment of split regular rest).
 export const DAILY_REST_REDUCED_MS = 9 * HOUR_MS;
 export const MAX_REDUCED_DAILY_RESTS_BETWEEN_WEEKLY_RESTS = 3;
 
