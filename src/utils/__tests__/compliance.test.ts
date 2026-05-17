@@ -1,4 +1,4 @@
-import { getWarningLevel } from '../compliance';
+import { getWarningLevel, isExtendedDailyDrivingAllowed } from '../compliance';
 
 describe('getWarningLevel', () => {
   const LIMIT = 100;
@@ -22,5 +22,23 @@ describe('getWarningLevel', () => {
 
   it('returns danger when exceeding the limit', () => {
     expect(getWarningLevel(150, LIMIT)).toBe('danger');
+  });
+});
+
+describe('isExtendedDailyDrivingAllowed', () => {
+  it('allows extension when no extended drives have been used', () => {
+    expect(isExtendedDailyDrivingAllowed(0)).toBe(true);
+  });
+
+  it('allows extension when one extended drive has been used', () => {
+    expect(isExtendedDailyDrivingAllowed(1)).toBe(true);
+  });
+
+  it('disallows extension after the second extended drive', () => {
+    expect(isExtendedDailyDrivingAllowed(2)).toBe(false);
+  });
+
+  it('disallows extension when already over the limit', () => {
+    expect(isExtendedDailyDrivingAllowed(3)).toBe(false);
   });
 });
