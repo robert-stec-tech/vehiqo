@@ -1,5 +1,5 @@
-import { sumModeTimeInRange } from '@/utils/workTime';
-import type { WorkSession, WorkMode } from '@/db/types';
+import { getDrivingSinceLastBreak, sumModeTimeInRange } from '@/utils/workTime';
+import type { WorkMode, WorkSession } from '@/db/types';
 
 function session(
   mode: WorkMode,
@@ -87,5 +87,76 @@ describe('sumModeTimeInRange', () => {
       session('driving', 150, 170),
     ];
     expect(sumModeTimeInRange(sessions, 'driving', FROM, TO)).toBe(50);
+  });
+});
+
+describe('getDrivingSinceLastBreak', () => {
+  const MIN = 60 * 1000;
+  const HOUR = 60 * MIN;
+
+  it('returns 0 for no sessions', () => {
+    expect(getDrivingSinceLastBreak([], 1000)).toBe(0);
+  });
+
+  it('returns the duration of a single completed driving session', () => {
+    const sessions = [session('driving', 0, 2 * HOUR)];
+    expect(getDrivingSinceLastBreak(sessions, 2 * HOUR)).toBe(2 * HOUR);
+  });
+
+  it('counts an ongoing driving session up to `now`', () => {
+    const sessions = [session('driving', 0, null)];
+    expect(getDrivingSinceLastBreak(sessions, 90 * MIN)).toBe(90 * MIN);
+  });
+
+  it('resets after a full break of exactly 45 minutes', () => {
+    const sessions = [
+      session('driving', 0, 2 * HOUR),
+      session('break', 2 * HOUR, 2 * HOUR + 45 * MIN),
+      session('driving', 2 * HOUR + 45 * MIN, 3 * HOUR + 45 * MIN),
+    ];
+    expect(getDrivingSinceLastBreak(sessions, 3 * HOUR + 45 * MIN)).toBe(
+      1 * HOUR,
+    );
+  });
+
+  it('does NOT reset after a break shorter than 45 minutes', () => {
+    const sessions = [
+      session('driving', 0, 2 * HOUR),
+      session('break', 2 * HOUR, 2 * HOUR + 44 * MIN),
+      session('driving', 2 * HOUR + 44 * MIN, 3 * HOUR + 44 * MIN),
+    ];
+    expect(getDrivingSinceLastBreak(sessions, 3 * HOUR + 44 * MIN)).toBe(
+      3 * HOUR,
+    );
+  });
+
+  it('resets after a rest period', () => {
+    const sessions = [
+      session('driving', 0, 3 * HOUR),
+      session('rest', 3 * HOUR, 12 * HOUR),
+      session('driving', 12 * HOUR, 13 * HOUR),
+    ];
+    expect(getDrivingSinceLastBreak(sessions, 13 * HOUR)).toBe(1 * HOUR);
+  });
+
+  it('treats other work and standby as neither adding nor resetting', () => {
+    const sessions = [
+      session('driving', 0, 2 * HOUR),
+      session('other_work', 2 * HOUR, 3 * HOUR),
+      session('standby', 3 * HOUR, 4 * HOUR),
+      session('driving', 4 * HOUR, 5 * HOUR),
+    ];
+    expect(getDrivingSinceLastBreak(sessions, 5 * HOUR)).toBe(3 * HOUR);
+  });
+
+  it('sorts unordered sessions before accumulating', () => {
+    const sessions = [
+      session('driving', 2 * HOUR + 45 * MIN, 3 * HOUR + 45 * MIN),
+      session('driving', 0, 2 * HOUR),
+      session('break', 2 * HOUR, 2 * HOUR + 45 * MIN),
+    ];
+    expect(getDrivingSinceLastBreak(sessions, 3 * HOUR + 45 * MIN)).toBe(
+      1 * HOUR,
+    );
   });
 });
