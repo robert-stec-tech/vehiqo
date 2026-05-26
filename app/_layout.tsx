@@ -1,9 +1,9 @@
 import '../global.css';
-import '../src/i18n';
+import '@/i18n';
 import { useEffect, useState } from 'react';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { getDatabase } from '../src/db';
+import { getDatabase } from '@/db';
 
 SplashScreen.preventAutoHideAsync();
 

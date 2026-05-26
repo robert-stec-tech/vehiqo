@@ -1,4 +1,7 @@
-import { getWarningLevel, isExtendedDailyDrivingAllowed } from '../compliance';
+import {
+  getWarningLevel,
+  isExtendedDailyDrivingAllowed,
+} from '@/utils/compliance';
 
 describe('getWarningLevel', () => {
   const LIMIT = 100;

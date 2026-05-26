@@ -3,7 +3,7 @@ import {
   WARN_THRESHOLD_INFO,
   WARN_THRESHOLD_WARNING,
   WARN_THRESHOLD_DANGER,
-} from '../constants/euRegulations';
+} from '@/constants/euRegulations';
 
 export type WarningLevel = 'info' | 'warning' | 'danger';
 
