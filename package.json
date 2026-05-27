@@ -8,7 +8,9 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@expo/vector-icons": "^15.1.1",
@@ -37,6 +39,7 @@
     "@types/react": "~19.1.0",
     "babel-preset-expo": "^55.0.21",
     "postcss": "^8.5.14",
+    "prettier": "^3.8.3",
     "tailwindcss": "^4.2.4",
     "typescript": "~5.9.2"
   },
