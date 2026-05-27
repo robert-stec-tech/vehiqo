@@ -1,4 +1,5 @@
 import * as SQLite from 'expo-sqlite';
+
 import { SCHEMA_SQL, SCHEMA_VERSION } from './schema';
 
 const DB_NAME = 'vehiqo.db';

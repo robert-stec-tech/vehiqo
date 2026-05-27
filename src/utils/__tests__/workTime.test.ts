@@ -1,5 +1,5 @@
-import { getDrivingSinceLastBreak, sumModeTimeInRange } from '@/utils/workTime';
 import type { WorkMode, WorkSession } from '@/db/types';
+import { getDrivingSinceLastBreak, sumModeTimeInRange } from '@/utils/workTime';
 
 function session(
   mode: WorkMode,

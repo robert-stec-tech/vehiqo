@@ -1,4 +1,4 @@
-import { TouchableOpacity, Text } from 'react-native';
+import { Text, TouchableOpacity } from 'react-native';
 
 type ButtonVariant = 'primary' | 'secondary' | 'danger';
 

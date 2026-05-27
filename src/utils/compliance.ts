@@ -1,8 +1,8 @@
 import {
   MAX_EXTENDED_DAILY_DRIVES_PER_WEEK,
+  WARN_THRESHOLD_DANGER,
   WARN_THRESHOLD_INFO,
   WARN_THRESHOLD_WARNING,
-  WARN_THRESHOLD_DANGER,
 } from '@/constants/euRegulations';
 
 export type WarningLevel = 'info' | 'warning' | 'danger';

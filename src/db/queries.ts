@@ -1,5 +1,6 @@
-import { getDatabase } from './index';
 import { generateId } from '@/utils/id';
+
+import { getDatabase } from './index';
 import type { WorkMode, WorkSession } from './types';
 
 export async function getCurrentWorkSession(): Promise<WorkSession | null> {
