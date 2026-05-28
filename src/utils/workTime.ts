@@ -1,4 +1,8 @@
-import { REQUIRED_BREAK_MS } from '@/constants/euRegulations';
+import {
+  REQUIRED_BREAK_MS,
+  SPLIT_BREAK_FIRST_MS,
+  SPLIT_BREAK_SECOND_MS,
+} from '@/constants/euRegulations';
 import type { WorkMode, WorkSession } from '@/db/types';
 
 // Sums time spent in `mode` that overlaps the [from, to) range.
@@ -23,23 +27,35 @@ export function sumModeTimeInRange(
 }
 
 // Accumulated driving time since the last qualifying break or rest.
-// A full break (>= 45 min) or any rest period resets the counter to zero.
-// Other work, standby and short stops neither add to nor reset the counter.
-// NOTE: split break (15 + 30 min) is not handled here — both segments are
-// treated as short breaks that do not reset. To be refined separately.
+// Resets to zero when the driver completes a qualifying break or rest:
+//   - a single break of at least 45 min, OR
+//   - a split break: a part of at least 15 min followed later by a part of
+//     at least 30 min (order required by art. 7), OR
+//   - any rest period.
 export function getDrivingSinceLastBreak(
   sessions: WorkSession[],
   now: number,
 ): number {
   const ordered = [...sessions].sort((a, b) => a.started_at - b.started_at);
   let accumulated = 0;
+  let pendingFirstBreak = false;
 
   for (const session of ordered) {
     const duration = (session.ended_at ?? now) - session.started_at;
+
     if (session.mode === 'rest') {
       accumulated = 0;
-    } else if (session.mode === 'break' && duration >= REQUIRED_BREAK_MS) {
-      accumulated = 0;
+      pendingFirstBreak = false;
+    } else if (session.mode === 'break') {
+      if (duration >= REQUIRED_BREAK_MS) {
+        accumulated = 0;
+        pendingFirstBreak = false;
+      } else if (duration >= SPLIT_BREAK_SECOND_MS && pendingFirstBreak) {
+        accumulated = 0;
+        pendingFirstBreak = false;
+      } else if (duration >= SPLIT_BREAK_FIRST_MS) {
+        pendingFirstBreak = true;
+      }
     } else if (session.mode === 'driving') {
       accumulated += duration;
     }

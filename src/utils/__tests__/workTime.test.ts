@@ -159,4 +159,43 @@ describe('getDrivingSinceLastBreak', () => {
       1 * HOUR,
     );
   });
+
+  it('resets after a split break: 15 min then 30 min with driving in between', () => {
+    const sessions = [
+      session('driving', 0, 2 * HOUR),
+      session('break', 2 * HOUR, 2 * HOUR + 15 * MIN),
+      session('driving', 2 * HOUR + 15 * MIN, 3 * HOUR + 15 * MIN),
+      session('break', 3 * HOUR + 15 * MIN, 3 * HOUR + 45 * MIN),
+      session('driving', 3 * HOUR + 45 * MIN, 4 * HOUR + 15 * MIN),
+    ];
+    expect(getDrivingSinceLastBreak(sessions, 4 * HOUR + 15 * MIN)).toBe(
+      30 * MIN,
+    );
+  });
+
+  it('does not reset when the first split part is shorter than 15 min', () => {
+    const sessions = [
+      session('driving', 0, 2 * HOUR),
+      session('break', 2 * HOUR, 2 * HOUR + 10 * MIN),
+      session('driving', 2 * HOUR + 10 * MIN, 3 * HOUR + 10 * MIN),
+      session('break', 3 * HOUR + 10 * MIN, 3 * HOUR + 40 * MIN),
+      session('driving', 3 * HOUR + 40 * MIN, 4 * HOUR + 10 * MIN),
+    ];
+    expect(getDrivingSinceLastBreak(sessions, 4 * HOUR + 10 * MIN)).toBe(
+      3 * HOUR + 30 * MIN,
+    );
+  });
+
+  it('does not reset when the second split part is shorter than 30 min', () => {
+    const sessions = [
+      session('driving', 0, 2 * HOUR),
+      session('break', 2 * HOUR, 2 * HOUR + 30 * MIN),
+      session('driving', 2 * HOUR + 30 * MIN, 3 * HOUR + 30 * MIN),
+      session('break', 3 * HOUR + 30 * MIN, 3 * HOUR + 45 * MIN),
+      session('driving', 3 * HOUR + 45 * MIN, 4 * HOUR + 15 * MIN),
+    ];
+    expect(getDrivingSinceLastBreak(sessions, 4 * HOUR + 15 * MIN)).toBe(
+      3 * HOUR + 30 * MIN,
+    );
+  });
 });
