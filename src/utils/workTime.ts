@@ -65,7 +65,7 @@ export function getDrivingSinceLastBreak(
 }
 
 // Returns the end timestamp of the most recent 'rest' session lasting at least
-// minDurationMs, or null if no qualifying rest is found.
+// `minDurationMs`, or null if no qualifying rest is found.
 // Ongoing rest sessions are treated as ending at `now`.
 export function getLastRestPeriodEnd(
   sessions: WorkSession[],

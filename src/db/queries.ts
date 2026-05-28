@@ -1,3 +1,7 @@
+import {
+  DAILY_REST_REDUCED_MS,
+  WEEKLY_REST_REDUCED_MS,
+} from '@/constants/euRegulations';
 import { generateId } from '@/utils/id';
 
 import { getDatabase } from './index';
@@ -20,6 +24,13 @@ export async function startWorkSession(mode: WorkMode): Promise<WorkSession> {
   const id = generateId();
 
   await db.withTransactionAsync(async () => {
+    const prev = await db.getFirstAsync<{ mode: WorkMode; started_at: number }>(
+      `SELECT mode, started_at FROM work_sessions
+       WHERE ended_at IS NULL
+       ORDER BY started_at DESC
+       LIMIT 1;`,
+    );
+
     await db.runAsync(
       `UPDATE work_sessions
        SET ended_at = ?, updated_at = ?
@@ -27,6 +38,30 @@ export async function startWorkSession(mode: WorkMode): Promise<WorkSession> {
       now,
       now,
     );
+
+    // Persist the rest end so the daily/weekly driving counters anchor to a
+    // precise point instead of scanning session history. The reduced legal
+    // minimums (9h daily, 24h weekly) qualify a rest as a counter reset.
+    if (prev?.mode === 'rest') {
+      const duration = now - prev.started_at;
+      if (duration >= DAILY_REST_REDUCED_MS) {
+        await db.runAsync(
+          `INSERT OR REPLACE INTO app_settings (key, value, updated_at)
+           VALUES ('last_daily_rest_end', ?, ?);`,
+          String(now),
+          now,
+        );
+      }
+      if (duration >= WEEKLY_REST_REDUCED_MS) {
+        await db.runAsync(
+          `INSERT OR REPLACE INTO app_settings (key, value, updated_at)
+           VALUES ('last_weekly_rest_end', ?, ?);`,
+          String(now),
+          now,
+        );
+      }
+    }
+
     await db.runAsync(
       `INSERT INTO work_sessions (id, mode, started_at, created_at, updated_at)
        VALUES (?, ?, ?, ?, ?);`,
@@ -62,4 +97,27 @@ export async function getWorkSessionsInRange(
     to,
     from,
   );
+}
+
+export interface WorkTimerSettings {
+  lastDailyRestEnd: number | null;
+  lastWeeklyRestEnd: number | null;
+}
+
+export async function getWorkTimerSettings(): Promise<WorkTimerSettings> {
+  const db = await getDatabase();
+  const rows = await db.getAllAsync<{ key: string; value: string }>(
+    `SELECT key, value FROM app_settings
+     WHERE key IN ('last_daily_rest_end', 'last_weekly_rest_end');`,
+  );
+
+  const readTimestamp = (key: string): number | null => {
+    const row = rows.find((r) => r.key === key);
+    return row ? Number(row.value) : null;
+  };
+
+  return {
+    lastDailyRestEnd: readTimestamp('last_daily_rest_end'),
+    lastWeeklyRestEnd: readTimestamp('last_weekly_rest_end'),
+  };
 }
