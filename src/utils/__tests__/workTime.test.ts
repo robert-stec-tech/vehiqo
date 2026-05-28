@@ -1,5 +1,9 @@
 import type { WorkMode, WorkSession } from '@/db/types';
-import { getDrivingSinceLastBreak, sumModeTimeInRange } from '@/utils/workTime';
+import {
+  getDrivingSinceLastBreak,
+  getLastRestPeriodEnd,
+  sumModeTimeInRange,
+} from '@/utils/workTime';
 
 function session(
   mode: WorkMode,
@@ -16,6 +20,9 @@ function session(
     synced_at: null,
   };
 }
+
+const MIN = 60 * 1000;
+const HOUR = 60 * MIN;
 
 describe('sumModeTimeInRange', () => {
   const FROM = 100;
@@ -91,9 +98,6 @@ describe('sumModeTimeInRange', () => {
 });
 
 describe('getDrivingSinceLastBreak', () => {
-  const MIN = 60 * 1000;
-  const HOUR = 60 * MIN;
-
   it('returns 0 for no sessions', () => {
     expect(getDrivingSinceLastBreak([], 1000)).toBe(0);
   });
@@ -196,6 +200,72 @@ describe('getDrivingSinceLastBreak', () => {
     ];
     expect(getDrivingSinceLastBreak(sessions, 4 * HOUR + 15 * MIN)).toBe(
       3 * HOUR + 30 * MIN,
+    );
+  });
+});
+
+describe('getLastRestPeriodEnd', () => {
+  const MIN_DURATION = 9 * HOUR; // daily rest minimum
+
+  it('returns null when there are no sessions', () => {
+    expect(getLastRestPeriodEnd([], MIN_DURATION, 100 * HOUR)).toBeNull();
+  });
+
+  it('returns null when no rest meets the minimum duration', () => {
+    const sessions = [session('rest', 0, 8 * HOUR)];
+    expect(getLastRestPeriodEnd(sessions, MIN_DURATION, 10 * HOUR)).toBeNull();
+  });
+
+  it('returns null when there are only non-rest sessions', () => {
+    const sessions = [session('driving', 0, 10 * HOUR)];
+    expect(getLastRestPeriodEnd(sessions, MIN_DURATION, 10 * HOUR)).toBeNull();
+  });
+
+  it('returns ended_at of a qualifying completed rest', () => {
+    const sessions = [session('rest', 0, 11 * HOUR)];
+    expect(getLastRestPeriodEnd(sessions, MIN_DURATION, 20 * HOUR)).toBe(
+      11 * HOUR,
+    );
+  });
+
+  it('treats ongoing rest as ending at `now`', () => {
+    const sessions = [session('rest', 0, null)];
+    const now = 10 * HOUR;
+    expect(getLastRestPeriodEnd(sessions, MIN_DURATION, now)).toBe(now);
+  });
+
+  it('ongoing rest shorter than minimum returns null', () => {
+    const sessions = [session('rest', 0, null)];
+    const now = 8 * HOUR;
+    expect(getLastRestPeriodEnd(sessions, MIN_DURATION, now)).toBeNull();
+  });
+
+  it('returns the most recent qualifying rest, not the earliest', () => {
+    const sessions = [
+      session('rest', 0, 11 * HOUR),
+      session('driving', 11 * HOUR, 14 * HOUR),
+      session('rest', 14 * HOUR, 25 * HOUR),
+    ];
+    expect(getLastRestPeriodEnd(sessions, MIN_DURATION, 30 * HOUR)).toBe(
+      25 * HOUR,
+    );
+  });
+
+  it('skips a short rest before a qualifying one', () => {
+    const sessions = [
+      session('rest', 0, 11 * HOUR),
+      session('rest', 20 * HOUR, 28 * HOUR), // 8h — too short
+    ];
+    expect(getLastRestPeriodEnd(sessions, MIN_DURATION, 30 * HOUR)).toBe(
+      11 * HOUR,
+    );
+  });
+
+  it('works for weekly rest minimum (24h)', () => {
+    const WEEKLY_MIN = 24 * HOUR;
+    const sessions = [session('rest', 0, 25 * HOUR)];
+    expect(getLastRestPeriodEnd(sessions, WEEKLY_MIN, 30 * HOUR)).toBe(
+      25 * HOUR,
     );
   });
 });

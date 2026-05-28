@@ -63,3 +63,20 @@ export function getDrivingSinceLastBreak(
 
   return accumulated;
 }
+
+// Returns the end timestamp of the most recent 'rest' session lasting at least
+// minDurationMs, or null if no qualifying rest is found.
+// Ongoing rest sessions are treated as ending at `now`.
+export function getLastRestPeriodEnd(
+  sessions: WorkSession[],
+  minDurationMs: number,
+  now: number,
+): number | null {
+  const ordered = [...sessions].sort((a, b) => b.started_at - a.started_at);
+  for (const session of ordered) {
+    if (session.mode !== 'rest') continue;
+    const end = session.ended_at ?? now;
+    if (end - session.started_at >= minDurationMs) return end;
+  }
+  return null;
+}
