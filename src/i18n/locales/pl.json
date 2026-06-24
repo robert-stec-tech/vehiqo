@@ -21,7 +21,30 @@
       "biweekly": "Jazda dwutygodniowa"
     },
     "currentMode": "Aktualny tryb",
-    "noMode": "Nie wybrano trybu"
+    "noMode": "Nie wybrano trybu",
+    "warnings": {
+      "breakDueSoon": "Przerwa za 30 min",
+      "drivingSinceBreak": {
+        "info": "Przejechano 75% czasu przed przerwą",
+        "warning": "Wkrótce wymagana przerwa",
+        "danger": "Obowiązkowa przerwa teraz"
+      },
+      "dailyDriving": {
+        "info": "75% dziennego limitu jazdy",
+        "warning": "Dzienny limit jazdy prawie wyczerpany",
+        "danger": "Dzienny limit jazdy osiągnięty"
+      },
+      "weeklyDriving": {
+        "info": "75% tygodniowego limitu jazdy",
+        "warning": "Tygodniowy limit jazdy prawie wyczerpany",
+        "danger": "Tygodniowy limit jazdy osiągnięty"
+      },
+      "biweeklyDriving": {
+        "info": "75% dwutygodniowego limitu jazdy",
+        "warning": "Dwutygodniowy limit jazdy prawie wyczerpany",
+        "danger": "Dwutygodniowy limit jazdy osiągnięty"
+      }
+    }
   },
   "common": {
     "loading": "Ładowanie...",

@@ -1,0 +1,70 @@
+import type { WarningLevel } from '@/utils/compliance';
+
+export type AlertSeverity = WarningLevel;
+
+export interface CounterWarnings {
+  drivingSinceBreak: WarningLevel | null;
+  dailyDriving: WarningLevel | null;
+  weeklyDriving: WarningLevel | null;
+  biweeklyDriving: WarningLevel | null;
+}
+
+type CounterAlertId = keyof CounterWarnings;
+
+export type TimerAlertId = 'breakDueSoon' | CounterAlertId;
+
+type MessageKey =
+  | 'workTimer.warnings.breakDueSoon'
+  | `workTimer.warnings.${CounterAlertId}.${WarningLevel}`;
+
+export interface TimerAlert {
+  id: TimerAlertId;
+  severity: AlertSeverity;
+  messageKey: MessageKey;
+}
+
+const COUNTER_ORDER: CounterAlertId[] = [
+  'drivingSinceBreak',
+  'dailyDriving',
+  'weeklyDriving',
+  'biweeklyDriving',
+];
+
+const SEVERITY_RANK: Record<AlertSeverity, number> = {
+  danger: 0,
+  warning: 1,
+  info: 2,
+};
+
+// The "break due soon" pre-alert is dropped once driving-since-break hits the
+// 100% level: the break is no longer "soon" but mandatory now, so the danger
+// message for that counter replaces it instead of showing both.
+export function buildTimerAlerts(
+  warnings: CounterWarnings,
+  isBreakDueSoon: boolean,
+): TimerAlert[] {
+  const alerts: TimerAlert[] = [];
+
+  if (isBreakDueSoon && warnings.drivingSinceBreak !== 'danger') {
+    alerts.push({
+      id: 'breakDueSoon',
+      severity: 'warning',
+      messageKey: 'workTimer.warnings.breakDueSoon',
+    });
+  }
+
+  for (const id of COUNTER_ORDER) {
+    const level = warnings[id];
+    if (level !== null) {
+      alerts.push({
+        id,
+        severity: level,
+        messageKey: `workTimer.warnings.${id}.${level}`,
+      });
+    }
+  }
+
+  return alerts.sort(
+    (a, b) => SEVERITY_RANK[a.severity] - SEVERITY_RANK[b.severity],
+  );
+}

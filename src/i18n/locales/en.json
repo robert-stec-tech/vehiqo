@@ -21,7 +21,30 @@
       "biweekly": "Two-week driving"
     },
     "currentMode": "Current mode",
-    "noMode": "No mode selected"
+    "noMode": "No mode selected",
+    "warnings": {
+      "breakDueSoon": "Break due in 30 min",
+      "drivingSinceBreak": {
+        "info": "Driving 75% of break interval",
+        "warning": "Take a break soon",
+        "danger": "Mandatory break required now"
+      },
+      "dailyDriving": {
+        "info": "75% of daily driving limit",
+        "warning": "Daily driving limit almost reached",
+        "danger": "Daily driving limit reached"
+      },
+      "weeklyDriving": {
+        "info": "75% of weekly driving limit",
+        "warning": "Weekly driving limit almost reached",
+        "danger": "Weekly driving limit reached"
+      },
+      "biweeklyDriving": {
+        "info": "75% of two-week driving limit",
+        "warning": "Two-week driving limit almost reached",
+        "danger": "Two-week driving limit reached"
+      }
+    }
   },
   "common": {
     "loading": "Loading...",
