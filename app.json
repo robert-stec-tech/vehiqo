@@ -33,6 +33,11 @@
       }
     },
     "owner": "robert-stec-tech",
-    "plugins": ["expo-localization", "expo-router", "expo-sqlite"]
+    "plugins": [
+      "expo-localization",
+      "expo-router",
+      "expo-sqlite",
+      "expo-font"
+    ]
   }
 }
