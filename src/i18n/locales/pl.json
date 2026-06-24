@@ -1,10 +1,27 @@
 {
   "tabs": {
     "timer": "Czas pracy",
-    "dailyCheck": "Daily check",
+    "dailyCheck": "Przegląd dzienny",
     "fatigue": "Zmęczenie",
     "map": "Mapa",
     "settings": "Ustawienia"
+  },
+  "workTimer": {
+    "modes": {
+      "driving": "Jazda",
+      "other_work": "Inna praca",
+      "standby": "Gotowość",
+      "break": "Przerwa",
+      "rest": "Odpoczynek"
+    },
+    "counters": {
+      "sinceBreak": "Od przerwy",
+      "daily": "Jazda dzienna",
+      "weekly": "Jazda tygodniowa",
+      "biweekly": "Jazda dwutygodniowa"
+    },
+    "currentMode": "Aktualny tryb",
+    "noMode": "Nie wybrano trybu"
   },
   "common": {
     "loading": "Ładowanie...",

@@ -29,7 +29,7 @@ export function Button({
 }: ButtonProps) {
   return (
     <TouchableOpacity
-      className={`rounded-xl py-4 px-6 items-center justify-center min-h-[48px] ${variants[variant]} ${disabled ? 'opacity-50' : ''}`}
+      className={`rounded-xl py-4 px-6 items-center justify-center min-h-12 ${variants[variant]} ${disabled ? 'opacity-50' : ''}`}
       onPress={onPress}
       disabled={disabled}
       accessibilityRole="button"

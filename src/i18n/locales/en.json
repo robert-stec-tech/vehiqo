@@ -6,6 +6,23 @@
     "map": "Map",
     "settings": "Settings"
   },
+  "workTimer": {
+    "modes": {
+      "driving": "Driving",
+      "other_work": "Other work",
+      "standby": "Availability",
+      "break": "Break",
+      "rest": "Rest"
+    },
+    "counters": {
+      "sinceBreak": "Since break",
+      "daily": "Daily driving",
+      "weekly": "Weekly driving",
+      "biweekly": "Two-week driving"
+    },
+    "currentMode": "Current mode",
+    "noMode": "No mode selected"
+  },
   "common": {
     "loading": "Loading...",
     "error": "Something went wrong",
