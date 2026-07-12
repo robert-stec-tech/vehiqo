@@ -30,4 +30,10 @@
   --color-night-card: #14171d;
   --color-night-elevated: #1d2127;
   --color-night-border: #2a2e34;
+
+  /* Text — used unconditionally (no dark: prefix) on screens redesigned for
+     the dark-first look; a real light-mode text pair is a separate future
+     step, not a fallback guess. */
+  --color-ink: #f3f5f9;
+  --color-ink-muted: #8e929a;
 }

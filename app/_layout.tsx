@@ -4,8 +4,14 @@ import '@/i18n';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
+import { Appearance } from 'react-native';
 
 import { getDatabase } from '@/db';
+
+// Dark is the default look, independent of the OS setting — many drivers run
+// older phones with no system dark mode, and night driving needs it. A proper
+// light/dark/system switch will land with the Settings screen.
+Appearance.setColorScheme('dark');
 
 SplashScreen.preventAutoHideAsync();
 

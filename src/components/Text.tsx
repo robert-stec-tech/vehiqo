@@ -18,8 +18,8 @@ const variantClasses: Record<TextVariant, string> = {
   heading: 'text-2xl font-bold',
   label: 'text-lg font-semibold',
   body: 'text-base',
-  caption: 'text-sm text-gray-500 dark:text-gray-400',
-  timestamp: 'text-xs text-gray-500 dark:text-gray-400',
+  caption: 'text-sm text-gray-500 dark:text-ink-muted',
+  timestamp: 'text-xs text-gray-500 dark:text-ink-muted',
 };
 
 export function Text({
@@ -30,7 +30,7 @@ export function Text({
 }: AppTextProps) {
   return (
     <RNText
-      className={`text-gray-900 dark:text-white ${variantClasses[variant]} ${className ?? ''}`}
+      className={`text-gray-900 dark:text-ink ${variantClasses[variant]} ${className ?? ''}`}
       {...props}
     >
       {children}

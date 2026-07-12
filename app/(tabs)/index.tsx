@@ -36,65 +36,69 @@ export default function TimerScreen() {
 
   if (isLoading) {
     return (
-      <SafeAreaView className="flex-1 bg-white dark:bg-gray-900">
-        <View className="flex-1 items-center justify-center">
+      <View className="flex-1 bg-gray-50 dark:bg-night">
+        <SafeAreaView className="flex-1 items-center justify-center">
           <Text>{t('common.loading')}</Text>
-        </View>
-      </SafeAreaView>
+        </SafeAreaView>
+      </View>
     );
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white dark:bg-gray-900">
-      <ScrollView contentContainerClassName="px-4 py-4 gap-6">
-        <Card>
-          <Text variant="caption">{t('workTimer.counters.sinceBreak')}</Text>
-          <Text variant="display">
-            {formatDuration(counters.drivingSinceBreak)}
-          </Text>
+    <View className="flex-1 bg-gray-50 dark:bg-night">
+      <SafeAreaView className="flex-1">
+        <ScrollView contentContainerClassName="px-4 py-4 gap-6">
+          <Card>
+            <Text variant="caption">{t('workTimer.counters.sinceBreak')}</Text>
+            <Text variant="display">
+              {formatDuration(counters.drivingSinceBreak)}
+            </Text>
 
-          <View className="flex-row gap-4 mt-4">
-            <View className="flex-1">
-              <Text variant="caption">{t('workTimer.counters.daily')}</Text>
-              <Text variant="label">
-                {formatDuration(counters.dailyDriving)}
-              </Text>
+            <View className="flex-row gap-4 mt-4">
+              <View className="flex-1">
+                <Text variant="caption">{t('workTimer.counters.daily')}</Text>
+                <Text variant="label">
+                  {formatDuration(counters.dailyDriving)}
+                </Text>
+              </View>
+              <View className="flex-1">
+                <Text variant="caption">{t('workTimer.counters.weekly')}</Text>
+                <Text variant="label">
+                  {formatDuration(counters.weeklyDriving)}
+                </Text>
+              </View>
+              <View className="flex-1">
+                <Text variant="caption">
+                  {t('workTimer.counters.biweekly')}
+                </Text>
+                <Text variant="label">
+                  {formatDuration(counters.biweeklyDriving)}
+                </Text>
+              </View>
             </View>
-            <View className="flex-1">
-              <Text variant="caption">{t('workTimer.counters.weekly')}</Text>
-              <Text variant="label">
-                {formatDuration(counters.weeklyDriving)}
-              </Text>
-            </View>
-            <View className="flex-1">
-              <Text variant="caption">{t('workTimer.counters.biweekly')}</Text>
-              <Text variant="label">
-                {formatDuration(counters.biweeklyDriving)}
-              </Text>
-            </View>
-          </View>
-        </Card>
+          </Card>
 
-        {alerts.length > 0 && (
+          {alerts.length > 0 && (
+            <View className="gap-3">
+              {alerts.map((alert) => (
+                <AlertBanner key={alert.id} alert={alert} />
+              ))}
+            </View>
+          )}
+
           <View className="gap-3">
-            {alerts.map((alert) => (
-              <AlertBanner key={alert.id} alert={alert} />
-            ))}
+            <View className="flex-row gap-3">
+              {renderButton('driving')}
+              {renderButton('other_work')}
+            </View>
+            <View className="flex-row gap-3">
+              {renderButton('standby')}
+              {renderButton('break')}
+            </View>
+            <View className="flex-row gap-3">{renderButton('rest')}</View>
           </View>
-        )}
-
-        <View className="gap-3">
-          <View className="flex-row gap-3">
-            {renderButton('driving')}
-            {renderButton('other_work')}
-          </View>
-          <View className="flex-row gap-3">
-            {renderButton('standby')}
-            {renderButton('break')}
-          </View>
-          <View className="flex-row gap-3">{renderButton('rest')}</View>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+        </ScrollView>
+      </SafeAreaView>
+    </View>
   );
 }
