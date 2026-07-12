@@ -16,6 +16,7 @@ import {
 import type { WorkMode, WorkSession } from '@/db/types';
 import { getWarningLevel, type WarningLevel } from '@/utils/compliance';
 import { getDrivingSinceLastBreak, sumModeTimeInRange } from '@/utils/workTime';
+import { buildTimerAlerts, type TimerAlert } from '@/utils/workTimerAlerts';
 
 const HOUR_MS = 60 * 60 * 1000;
 const TWO_WEEKS_MS = 14 * 24 * HOUR_MS;
@@ -39,6 +40,7 @@ export interface UseWorkTimerReturn {
   currentMode: WorkMode | null;
   counters: WorkTimerCounters;
   warnings: WorkTimerWarnings;
+  alerts: TimerAlert[];
   isBreakDueSoon: boolean;
   isLoading: boolean;
   switchMode: (mode: WorkMode) => Promise<void>;
@@ -132,6 +134,11 @@ export function useWorkTimer(): UseWorkTimerReturn {
     counters.drivingSinceBreak >=
     DRIVING_BEFORE_BREAK_MS - BREAK_PRE_ALERT_BEFORE_LIMIT_MS;
 
+  const alerts = useMemo(
+    () => buildTimerAlerts(warnings, isBreakDueSoon),
+    [warnings, isBreakDueSoon],
+  );
+
   const switchMode = useCallback(
     async (mode: WorkMode) => {
       const newSession = await startWorkSession(mode);
@@ -163,6 +170,7 @@ export function useWorkTimer(): UseWorkTimerReturn {
     currentMode,
     counters,
     warnings,
+    alerts,
     isBreakDueSoon,
     isLoading,
     switchMode,

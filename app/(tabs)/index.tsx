@@ -2,14 +2,15 @@ import { useTranslation } from 'react-i18next';
 import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Card, ModeButton, Text } from '@/components';
+import { AlertBanner, Card, ModeButton, Text } from '@/components';
 import type { WorkMode } from '@/db/types';
 import { useWorkTimer } from '@/hooks/useWorkTimer';
 import { formatDuration } from '@/utils/format';
 
 export default function TimerScreen() {
   const { t } = useTranslation();
-  const { currentMode, counters, isLoading, switchMode } = useWorkTimer();
+  const { currentMode, counters, alerts, isLoading, switchMode } =
+    useWorkTimer();
 
   const modeLabels: Record<WorkMode, string> = {
     driving: t('workTimer.modes.driving'),
@@ -70,6 +71,14 @@ export default function TimerScreen() {
             </View>
           </View>
         </Card>
+
+        {alerts.length > 0 && (
+          <View className="gap-3">
+            {alerts.map((alert) => (
+              <AlertBanner key={alert.id} alert={alert} />
+            ))}
+          </View>
+        )}
 
         <View className="gap-3">
           <View className="flex-row gap-3">
