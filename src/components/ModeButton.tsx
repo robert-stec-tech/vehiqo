@@ -9,7 +9,7 @@ interface ModeButtonProps {
   onPress: () => void;
 }
 
-// Status colors must stay identical in light and dark mode (see CLAUDE.md),
+// Status colors must stay identical in light and dark mode,
 // so they are applied unconditionally — not via the themed Text component.
 // Full literal class names are required: NativeWind cannot resolve dynamic
 // class strings at build time.
@@ -18,34 +18,34 @@ const modeColor: Record<
   { border: string; text: string; bgSelected: string; bgIdle: string }
 > = {
   driving: {
-    border: 'border-green-500',
-    text: 'text-green-500',
-    bgSelected: 'bg-green-500/40',
-    bgIdle: 'bg-green-500/10',
+    border: 'border-driving',
+    text: 'text-driving',
+    bgSelected: 'bg-driving/40',
+    bgIdle: 'bg-driving/10',
   },
   other_work: {
-    border: 'border-amber-500',
-    text: 'text-amber-500',
-    bgSelected: 'bg-amber-500/40',
-    bgIdle: 'bg-amber-500/10',
+    border: 'border-other-work',
+    text: 'text-other-work',
+    bgSelected: 'bg-other-work/40',
+    bgIdle: 'bg-other-work/10',
   },
   standby: {
-    border: 'border-gray-500',
-    text: 'text-gray-500',
-    bgSelected: 'bg-gray-500/40',
-    bgIdle: 'bg-gray-500/10',
+    border: 'border-standby',
+    text: 'text-standby',
+    bgSelected: 'bg-standby/40',
+    bgIdle: 'bg-standby/10',
   },
   break: {
-    border: 'border-blue-500',
-    text: 'text-blue-500',
-    bgSelected: 'bg-blue-500/40',
-    bgIdle: 'bg-blue-500/10',
+    border: 'border-break',
+    text: 'text-break',
+    bgSelected: 'bg-break/40',
+    bgIdle: 'bg-break/10',
   },
   rest: {
-    border: 'border-violet-500',
-    text: 'text-violet-500',
-    bgSelected: 'bg-violet-500/40',
-    bgIdle: 'bg-violet-500/10',
+    border: 'border-rest',
+    text: 'text-rest',
+    bgSelected: 'bg-rest/40',
+    bgIdle: 'bg-rest/10',
   },
 };
 
@@ -58,7 +58,7 @@ export function ModeButton({
   const c = modeColor[mode];
   return (
     <TouchableOpacity
-      className={`flex-1 border-2 rounded-2xl py-6 items-center justify-center min-h-[48px] ${c.border} ${selected ? c.bgSelected : c.bgIdle}`}
+      className={`flex-1 border-2 rounded-2xl py-6 items-center justify-center min-h-12 ${c.border} ${selected ? c.bgSelected : c.bgIdle}`}
       onPress={onPress}
       accessibilityRole="button"
       accessibilityState={{ selected }}

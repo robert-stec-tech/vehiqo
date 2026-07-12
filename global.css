@@ -5,16 +5,29 @@
 @import 'nativewind/theme';
 
 @theme {
-  --color-brand: #3b82f6;
-  --color-brand-dark: #2563eb;
+  /* Brand accent — electric blue */
+  --color-brand: #24abe8;
+  --color-brand-dark: #0091ce;
 
-  --color-driving: #22c55e;
-  --color-working: #f59e0b;
-  --color-break: #3b82f6;
-  --color-rest: #8b5cf6;
-  --color-standby: #6b7280;
+  /* Work mode statuses — distinguishable by hue alone, identical in light and
+     dark. Red and amber are reserved exclusively for alerts. */
+  --color-driving: #5ac576;
+  --color-other-work: #5b9df0;
+  --color-standby: #db7cd4;
+  --color-break: #4cdbe3;
+  --color-rest: #8c91d5;
 
-  --color-warning: #f59e0b;
-  --color-danger: #ef4444;
-  --color-success: #22c55e;
+  /* Alerts — three escalating levels */
+  --color-info: #909fb8;
+  --color-warning: #e3c23b;
+  --color-danger: #e64343;
+  --color-success: #5ac576;
+
+  /* Night surfaces — blue-tinted dark greys for the premium look, applied behind
+     the dark: variant (light mode falls back to Tailwind greys / white). */
+  --color-night: #0a0c11;
+  --color-night-sunken: #101317;
+  --color-night-card: #14171d;
+  --color-night-elevated: #1d2127;
+  --color-night-border: #2a2e34;
 }
