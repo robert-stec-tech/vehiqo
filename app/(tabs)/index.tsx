@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AlertBanner, Card, ModeButton, Text } from '@/components';
 import type { WorkMode } from '@/db/types';
+import { useDangerVibration } from '@/hooks/useDangerVibration';
 import { useWorkTimer } from '@/hooks/useWorkTimer';
 import { formatDuration } from '@/utils/format';
 
@@ -11,6 +12,8 @@ export default function TimerScreen() {
   const { t } = useTranslation();
   const { currentMode, counters, alerts, isLoading, switchMode } =
     useWorkTimer();
+
+  useDangerVibration(alerts);
 
   const modeLabels: Record<WorkMode, string> = {
     driving: t('workTimer.modes.driving'),
