@@ -70,9 +70,12 @@ export default function TimerScreen() {
 
   return (
     <View className="flex-1 bg-gray-50 dark:bg-night">
-      <SafeAreaView className="flex-1">
-        <ScrollView contentContainerClassName="px-4 py-4 gap-6">
-          <Card className="gap-2">
+      <SafeAreaView style={{ flex: 1 }}>
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerClassName="px-4 pt-3 gap-4"
+        >
+          <Card className="gap-3">
             <View className="flex-row items-center gap-2">
               <View
                 className={`w-2.5 h-2.5 rounded-full ${currentMode ? modeDot[currentMode] : 'bg-ink-muted'}`}
@@ -148,26 +151,20 @@ export default function TimerScreen() {
             </Card>
           </View>
 
-          {alerts.length > 0 && (
-            <View className="gap-3">
-              {alerts.map((alert) => (
-                <AlertBanner key={alert.id} alert={alert} />
-              ))}
-            </View>
-          )}
-
-          <View className="gap-2">
-            <View className="flex-row">{renderButton('driving')}</View>
-            <View className="flex-row gap-2">
-              {renderButton('other_work')}
-              {renderButton('standby')}
-            </View>
-            <View className="flex-row gap-2">
-              {renderButton('break')}
-              {renderButton('rest')}
-            </View>
-          </View>
+          {alerts.length > 0 && <AlertBanner alert={alerts[0]} />}
         </ScrollView>
+
+        <View className="gap-2 px-4 pb-2 pt-3">
+          <View className="flex-row">{renderButton('driving')}</View>
+          <View className="flex-row gap-2">
+            {renderButton('other_work')}
+            {renderButton('standby')}
+          </View>
+          <View className="flex-row gap-2">
+            {renderButton('break')}
+            {renderButton('rest')}
+          </View>
+        </View>
       </SafeAreaView>
     </View>
   );
