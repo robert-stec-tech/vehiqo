@@ -1,6 +1,7 @@
 import { Text as RNText, TextProps } from 'react-native';
 
 type TextVariant =
+  | 'hero'
   | 'display'
   | 'heading'
   | 'label'
@@ -14,6 +15,7 @@ interface AppTextProps extends TextProps {
 }
 
 const variantClasses: Record<TextVariant, string> = {
+  hero: 'text-hero font-bold tracking-tight',
   display: 'text-4xl font-bold',
   heading: 'text-2xl font-bold',
   label: 'text-lg font-semibold',

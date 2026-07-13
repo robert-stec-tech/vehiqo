@@ -36,4 +36,9 @@
      step, not a fallback guess. */
   --color-ink: #f3f5f9;
   --color-ink-muted: #8e929a;
+
+  /* Hero timer — the single most important number on screen, sized well above
+     the default scale so it reads at a glance from the dashboard. */
+  --text-hero: 4.625rem;
+  --text-hero--line-height: 0.9;
 }

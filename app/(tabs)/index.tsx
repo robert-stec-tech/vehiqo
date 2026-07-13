@@ -8,6 +8,16 @@ import { useDangerVibration } from '@/hooks/useDangerVibration';
 import { useWorkTimer } from '@/hooks/useWorkTimer';
 import { formatDuration } from '@/utils/format';
 
+// TODO: shares the mode→color association with ModeButton; extract a single
+// source if a third consumer appears.
+const modeDot: Record<WorkMode, string> = {
+  driving: 'bg-driving',
+  other_work: 'bg-other-work',
+  standby: 'bg-standby',
+  break: 'bg-break',
+  rest: 'bg-rest',
+};
+
 export default function TimerScreen() {
   const { t } = useTranslation();
   const { currentMode, counters, alerts, isLoading, switchMode } =
@@ -49,8 +59,15 @@ export default function TimerScreen() {
       <SafeAreaView className="flex-1">
         <ScrollView contentContainerClassName="px-4 py-4 gap-6">
           <Card>
-            <Text variant="caption">{t('workTimer.counters.sinceBreak')}</Text>
-            <Text variant="display">
+            <View className="flex-row items-center gap-2">
+              <View
+                className={`w-2.5 h-2.5 rounded-full ${currentMode ? modeDot[currentMode] : 'bg-ink-muted'}`}
+              />
+              <Text variant="caption" className="uppercase">
+                {t('workTimer.counters.sinceBreak')}
+              </Text>
+            </View>
+            <Text variant="hero" className="mt-1">
               {formatDuration(counters.drivingSinceBreak)}
             </Text>
 
