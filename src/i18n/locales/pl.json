@@ -22,6 +22,8 @@
     },
     "currentMode": "Aktualny tryb",
     "noMode": "Nie wybrano trybu",
+    "breakRemaining": "{{time}} do obowiązkowej przerwy",
+    "breakRequired": "Wymagana przerwa",
     "warnings": {
       "breakDueSoon": "Przerwa za 30 min",
       "drivingSinceBreak": {

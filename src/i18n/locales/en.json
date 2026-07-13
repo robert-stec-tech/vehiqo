@@ -22,6 +22,8 @@
     },
     "currentMode": "Current mode",
     "noMode": "No mode selected",
+    "breakRemaining": "{{time}} until a mandatory break",
+    "breakRequired": "Mandatory break required",
     "warnings": {
       "breakDueSoon": "Break due in 30 min",
       "drivingSinceBreak": {

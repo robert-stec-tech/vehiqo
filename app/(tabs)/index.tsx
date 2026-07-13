@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AlertBanner, Card, ModeButton, ProgressBar, Text } from '@/components';
 import {
+  DRIVING_BEFORE_BREAK_MS,
   MAX_BIWEEKLY_DRIVING_MS,
   MAX_DAILY_DRIVING_REGULAR_MS,
   MAX_WEEKLY_DRIVING_MS,
@@ -29,6 +30,14 @@ export default function TimerScreen() {
     useWorkTimer();
 
   useDangerVibration(alerts);
+
+  // Derive "remaining" from the elapsed value already floored to whole minutes,
+  // so the on-screen counter and remaining time always sum to the exact limit
+  // (formatDuration truncates seconds — computing both from the raw value would
+  // display e.g. 1:00 + 3:29 instead of 1:00 + 3:30).
+  const elapsedToMinute =
+    Math.floor(counters.drivingSinceBreak / 60_000) * 60_000;
+  const breakRemaining = DRIVING_BEFORE_BREAK_MS - elapsedToMinute;
 
   const modeLabels: Record<WorkMode, string> = {
     driving: t('workTimer.modes.driving'),
@@ -63,7 +72,7 @@ export default function TimerScreen() {
     <View className="flex-1 bg-gray-50 dark:bg-night">
       <SafeAreaView className="flex-1">
         <ScrollView contentContainerClassName="px-4 py-4 gap-6">
-          <Card>
+          <Card className="gap-2">
             <View className="flex-row items-center gap-2">
               <View
                 className={`w-2.5 h-2.5 rounded-full ${currentMode ? modeDot[currentMode] : 'bg-ink-muted'}`}
@@ -71,10 +80,24 @@ export default function TimerScreen() {
               <Text variant="caption" className="uppercase">
                 {t('workTimer.counters.sinceBreak')}
               </Text>
+              <Text variant="caption" className="ml-auto">
+                / {formatDuration(DRIVING_BEFORE_BREAK_MS)}
+              </Text>
             </View>
-            <Text variant="hero" className="mt-1">
+            <Text variant="hero">
               {formatDuration(counters.drivingSinceBreak)}
             </Text>
+            <Text variant="caption">
+              {breakRemaining > 0
+                ? t('workTimer.breakRemaining', {
+                    time: formatDuration(breakRemaining),
+                  })
+                : t('workTimer.breakRequired')}
+            </Text>
+            <ProgressBar
+              value={counters.drivingSinceBreak}
+              limit={DRIVING_BEFORE_BREAK_MS}
+            />
           </Card>
 
           <View className="flex-row gap-3">
