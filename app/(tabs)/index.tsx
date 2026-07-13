@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AlertBanner, Card, ModeButton, Text } from '@/components';
+import { AlertBanner, Card, ModeButton, ProgressBar, Text } from '@/components';
 import {
   MAX_BIWEEKLY_DRIVING_MS,
   MAX_DAILY_DRIVING_REGULAR_MS,
@@ -78,36 +78,48 @@ export default function TimerScreen() {
           </Card>
 
           <View className="flex-row gap-3">
-            <Card className="flex-1">
+            <Card className="flex-1 gap-1.5">
               <Text variant="caption" className="uppercase">
                 {t('workTimer.counters.daily')}
               </Text>
-              <Text variant="heading" className="mt-1.5">
+              <Text variant="heading">
                 {formatDuration(counters.dailyDriving)}
               </Text>
-              <Text variant="timestamp" className="mt-1">
+              <ProgressBar
+                value={counters.dailyDriving}
+                limit={MAX_DAILY_DRIVING_REGULAR_MS}
+              />
+              <Text variant="timestamp">
                 / {formatDuration(MAX_DAILY_DRIVING_REGULAR_MS)}
               </Text>
             </Card>
-            <Card className="flex-1">
+            <Card className="flex-1 gap-1.5">
               <Text variant="caption" className="uppercase">
                 {t('workTimer.counters.weekly')}
               </Text>
-              <Text variant="heading" className="mt-1.5">
+              <Text variant="heading">
                 {formatDuration(counters.weeklyDriving)}
               </Text>
-              <Text variant="timestamp" className="mt-1">
+              <ProgressBar
+                value={counters.weeklyDriving}
+                limit={MAX_WEEKLY_DRIVING_MS}
+              />
+              <Text variant="timestamp">
                 / {formatDuration(MAX_WEEKLY_DRIVING_MS)}
               </Text>
             </Card>
-            <Card className="flex-1">
+            <Card className="flex-1 gap-1.5">
               <Text variant="caption" className="uppercase">
                 {t('workTimer.counters.biweekly')}
               </Text>
-              <Text variant="heading" className="mt-1.5">
+              <Text variant="heading">
                 {formatDuration(counters.biweeklyDriving)}
               </Text>
-              <Text variant="timestamp" className="mt-1">
+              <ProgressBar
+                value={counters.biweeklyDriving}
+                limit={MAX_BIWEEKLY_DRIVING_MS}
+              />
+              <Text variant="timestamp">
                 / {formatDuration(MAX_BIWEEKLY_DRIVING_MS)}
               </Text>
             </Card>
