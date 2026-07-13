@@ -1,3 +1,5 @@
+import { Ionicons } from '@expo/vector-icons';
+import { styled } from 'nativewind';
 import { Text, TouchableOpacity } from 'react-native';
 
 import type { WorkMode } from '@/db/types';
@@ -9,6 +11,12 @@ interface ModeButtonProps {
   onPress: () => void;
 }
 
+// styled() lets the icon take its color from a NativeWind class, so no color is
+// hardcoded outside global.css.
+const Icon = styled(Ionicons);
+
+type IconName = React.ComponentProps<typeof Ionicons>['name'];
+
 // Status colors must stay identical in light and dark mode,
 // so they are applied unconditionally — not via the themed Text component.
 // Full literal class names are required: NativeWind cannot resolve dynamic
@@ -16,48 +24,55 @@ interface ModeButtonProps {
 const modeColor: Record<
   WorkMode,
   {
-    border: string;
+    borderSelected: string;
     bgSelected: string;
-    bgIdle: string;
     textSelected: string;
     textIdle: string;
   }
 > = {
   driving: {
-    border: 'border-driving',
+    borderSelected: 'border-driving',
     bgSelected: 'bg-driving',
-    bgIdle: 'bg-driving/10',
     textSelected: 'text-night',
     textIdle: 'text-driving',
   },
   other_work: {
-    border: 'border-other-work',
+    borderSelected: 'border-other-work',
     bgSelected: 'bg-other-work',
-    bgIdle: 'bg-other-work/10',
     textSelected: 'text-night',
     textIdle: 'text-other-work',
   },
   standby: {
-    border: 'border-standby',
+    borderSelected: 'border-standby',
     bgSelected: 'bg-standby',
-    bgIdle: 'bg-standby/10',
     textSelected: 'text-night',
     textIdle: 'text-standby',
   },
   break: {
-    border: 'border-break',
+    borderSelected: 'border-break',
     bgSelected: 'bg-break',
-    bgIdle: 'bg-break/10',
     textSelected: 'text-night',
     textIdle: 'text-break',
   },
   rest: {
-    border: 'border-rest',
+    borderSelected: 'border-rest',
     bgSelected: 'bg-rest',
-    bgIdle: 'bg-rest/10',
     textSelected: 'text-night',
     textIdle: 'text-rest',
   },
+};
+
+// Idle buttons stay a neutral dark surface so the filled selected button stands
+// out by contrast; only the icon and label carry the mode color when idle.
+const idleSurface =
+  'bg-gray-100 dark:bg-night-elevated border-gray-300 dark:border-night-border';
+
+const modeIcon: Record<WorkMode, IconName> = {
+  driving: 'car-sport',
+  other_work: 'construct',
+  standby: 'time',
+  break: 'cafe',
+  rest: 'moon',
 };
 
 export function ModeButton({
@@ -67,18 +82,17 @@ export function ModeButton({
   onPress,
 }: ModeButtonProps) {
   const c = modeColor[mode];
+  const color = selected ? c.textSelected : c.textIdle;
+  const surface = selected ? `${c.bgSelected} ${c.borderSelected}` : idleSurface;
   return (
     <TouchableOpacity
-      className={`flex-1 border-2 rounded-2xl py-6 items-center justify-center min-h-12 ${c.border} ${selected ? c.bgSelected : c.bgIdle}`}
+      className={`h-16 flex-1 flex-row items-center justify-center gap-2 rounded-2xl border-2 px-2 ${surface}`}
       onPress={onPress}
       accessibilityRole="button"
       accessibilityState={{ selected }}
     >
-      <Text
-        className={`text-lg font-bold uppercase ${selected ? c.textSelected : c.textIdle}`}
-      >
-        {label}
-      </Text>
+      <Icon name={modeIcon[mode]} size={20} className={color} />
+      <Text className={`text-sm font-bold uppercase ${color}`}>{label}</Text>
     </TouchableOpacity>
   );
 }
