@@ -27,24 +27,24 @@
     "warnings": {
       "breakDueSoon": "Break due in 30 min",
       "drivingSinceBreak": {
-        "info": "Driving 75% of break interval",
-        "warning": "Take a break soon",
-        "danger": "Mandatory break required now"
+        "info": "Driving {{percent}}% of break interval",
+        "warning": "Take a break soon ({{percent}}%)",
+        "danger": "Mandatory break required now ({{percent}}%)"
       },
       "dailyDriving": {
-        "info": "75% of daily driving limit",
-        "warning": "Daily driving limit almost reached",
-        "danger": "Daily driving limit reached"
+        "info": "{{percent}}% of daily driving limit",
+        "warning": "Daily driving limit almost reached ({{percent}}%)",
+        "danger": "Daily driving limit reached ({{percent}}%)"
       },
       "weeklyDriving": {
-        "info": "75% of weekly driving limit",
-        "warning": "Weekly driving limit almost reached",
-        "danger": "Weekly driving limit reached"
+        "info": "{{percent}}% of weekly driving limit",
+        "warning": "Weekly driving limit almost reached ({{percent}}%)",
+        "danger": "Weekly driving limit reached ({{percent}}%)"
       },
       "biweeklyDriving": {
-        "info": "75% of two-week driving limit",
-        "warning": "Two-week driving limit almost reached",
-        "danger": "Two-week driving limit reached"
+        "info": "{{percent}}% of two-week driving limit",
+        "warning": "Two-week driving limit almost reached ({{percent}}%)",
+        "danger": "Two-week driving limit reached ({{percent}}%)"
       }
     }
   },

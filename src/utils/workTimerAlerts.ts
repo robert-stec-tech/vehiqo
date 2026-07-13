@@ -9,6 +9,13 @@ export interface CounterWarnings {
   biweeklyDriving: WarningLevel | null;
 }
 
+export interface CounterPercents {
+  drivingSinceBreak: number;
+  dailyDriving: number;
+  weeklyDriving: number;
+  biweeklyDriving: number;
+}
+
 type CounterAlertId = keyof CounterWarnings;
 
 export type TimerAlertId = 'breakDueSoon' | CounterAlertId;
@@ -21,6 +28,10 @@ export interface TimerAlert {
   id: TimerAlertId;
   severity: AlertSeverity;
   messageKey: MessageKey;
+  // Live percentage of the limit reached, shown in the message for the four
+  // counter-based alerts. breakDueSoon has no percent — it's a fixed 30-minute
+  // pre-alert, not a threshold-based one.
+  percent?: number;
 }
 
 const COUNTER_ORDER: CounterAlertId[] = [
@@ -41,6 +52,7 @@ const SEVERITY_RANK: Record<AlertSeverity, number> = {
 // message for that counter replaces it instead of showing both.
 export function buildTimerAlerts(
   warnings: CounterWarnings,
+  percents: CounterPercents,
   isBreakDueSoon: boolean,
 ): TimerAlert[] {
   const alerts: TimerAlert[] = [];
@@ -60,6 +72,7 @@ export function buildTimerAlerts(
         id,
         severity: level,
         messageKey: `workTimer.warnings.${id}.${level}`,
+        percent: percents[id],
       });
     }
   }

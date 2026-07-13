@@ -50,7 +50,7 @@ export function AlertBanner({ alert }: AlertBannerProps) {
         <Text className={`font-bold ${s.badgeText}`}>{s.icon}</Text>
       </View>
       <Text className={`flex-1 font-medium ${s.text}`}>
-        {t(alert.messageKey)}
+        {t(alert.messageKey, { percent: alert.percent })}
       </Text>
     </View>
   );

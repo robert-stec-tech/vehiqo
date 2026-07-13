@@ -16,7 +16,11 @@ import {
 import type { WorkMode, WorkSession } from '@/db/types';
 import { getWarningLevel, type WarningLevel } from '@/utils/compliance';
 import { getDrivingSinceLastBreak, sumModeTimeInRange } from '@/utils/workTime';
-import { buildTimerAlerts, type TimerAlert } from '@/utils/workTimerAlerts';
+import {
+  buildTimerAlerts,
+  type CounterPercents,
+  type TimerAlert,
+} from '@/utils/workTimerAlerts';
 
 const HOUR_MS = 60 * 60 * 1000;
 const TWO_WEEKS_MS = 14 * 24 * HOUR_MS;
@@ -92,6 +96,27 @@ function computeWarnings(counters: WorkTimerCounters): WorkTimerWarnings {
   };
 }
 
+// Live percentage of each limit reached — recomputed on every tick, so an
+// alert always shows the true value at that moment (e.g. 93%), not the
+// nominal threshold that triggered it (drivers cross 75/90/100% between
+// 30-second ticks, never exactly on the line).
+function computePercents(counters: WorkTimerCounters): CounterPercents {
+  return {
+    drivingSinceBreak: Math.round(
+      (counters.drivingSinceBreak / DRIVING_BEFORE_BREAK_MS) * 100,
+    ),
+    dailyDriving: Math.round(
+      (counters.dailyDriving / MAX_DAILY_DRIVING_REGULAR_MS) * 100,
+    ),
+    weeklyDriving: Math.round(
+      (counters.weeklyDriving / MAX_WEEKLY_DRIVING_MS) * 100,
+    ),
+    biweeklyDriving: Math.round(
+      (counters.biweeklyDriving / MAX_BIWEEKLY_DRIVING_MS) * 100,
+    ),
+  };
+}
+
 export function useWorkTimer(): UseWorkTimerReturn {
   const [isLoading, setIsLoading] = useState(true);
   const [currentMode, setCurrentMode] = useState<WorkMode | null>(null);
@@ -129,14 +154,15 @@ export function useWorkTimer(): UseWorkTimerReturn {
     [sessions, now, lastDailyRestEnd, lastWeeklyRestEnd],
   );
   const warnings = useMemo(() => computeWarnings(counters), [counters]);
+  const percents = useMemo(() => computePercents(counters), [counters]);
 
   const isBreakDueSoon =
     counters.drivingSinceBreak >=
     DRIVING_BEFORE_BREAK_MS - BREAK_PRE_ALERT_BEFORE_LIMIT_MS;
 
   const alerts = useMemo(
-    () => buildTimerAlerts(warnings, isBreakDueSoon),
-    [warnings, isBreakDueSoon],
+    () => buildTimerAlerts(warnings, percents, isBreakDueSoon),
+    [warnings, percents, isBreakDueSoon],
   );
 
   const switchMode = useCallback(

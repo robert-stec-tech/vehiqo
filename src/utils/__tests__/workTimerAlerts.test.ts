@@ -1,5 +1,6 @@
 import {
   buildTimerAlerts,
+  type CounterPercents,
   type CounterWarnings,
 } from '@/utils/workTimerAlerts';
 
@@ -10,14 +11,22 @@ const NO_WARNINGS: CounterWarnings = {
   biweeklyDriving: null,
 };
 
+const NO_PERCENTS: CounterPercents = {
+  drivingSinceBreak: 0,
+  dailyDriving: 0,
+  weeklyDriving: 0,
+  biweeklyDriving: 0,
+};
+
 describe('buildTimerAlerts', () => {
   it('returns no alerts when nothing is triggered', () => {
-    expect(buildTimerAlerts(NO_WARNINGS, false)).toEqual([]);
+    expect(buildTimerAlerts(NO_WARNINGS, NO_PERCENTS, false)).toEqual([]);
   });
 
-  it('builds a counter alert with matching severity and message key', () => {
+  it('builds a counter alert with matching severity, message key and live percent', () => {
     const alerts = buildTimerAlerts(
       { ...NO_WARNINGS, dailyDriving: 'info' },
+      { ...NO_PERCENTS, dailyDriving: 77 },
       false,
     );
     expect(alerts).toEqual([
@@ -25,8 +34,20 @@ describe('buildTimerAlerts', () => {
         id: 'dailyDriving',
         severity: 'info',
         messageKey: 'workTimer.warnings.dailyDriving.info',
+        percent: 77,
       },
     ]);
+  });
+
+  it('carries the correct percent per counter, not a shared value', () => {
+    const alerts = buildTimerAlerts(
+      { ...NO_WARNINGS, dailyDriving: 'warning', weeklyDriving: 'danger' },
+      { ...NO_PERCENTS, dailyDriving: 93, weeklyDriving: 104 },
+      false,
+    );
+    const byId = Object.fromEntries(alerts.map((a) => [a.id, a.percent]));
+    expect(byId.dailyDriving).toBe(93);
+    expect(byId.weeklyDriving).toBe(104);
   });
 
   it('orders alerts most severe first', () => {
@@ -37,6 +58,7 @@ describe('buildTimerAlerts', () => {
         weeklyDriving: 'warning',
         biweeklyDriving: null,
       },
+      NO_PERCENTS,
       false,
     );
     expect(alerts.map((a) => a.severity)).toEqual([
@@ -51,8 +73,8 @@ describe('buildTimerAlerts', () => {
     ]);
   });
 
-  it('adds the break-due-soon pre-alert as a warning', () => {
-    const alerts = buildTimerAlerts(NO_WARNINGS, true);
+  it('adds the break-due-soon pre-alert as a warning with no percent', () => {
+    const alerts = buildTimerAlerts(NO_WARNINGS, NO_PERCENTS, true);
     expect(alerts).toEqual([
       {
         id: 'breakDueSoon',
@@ -65,6 +87,7 @@ describe('buildTimerAlerts', () => {
   it('suppresses break-due-soon once driving-since-break reaches danger', () => {
     const alerts = buildTimerAlerts(
       { ...NO_WARNINGS, drivingSinceBreak: 'danger' },
+      { ...NO_PERCENTS, drivingSinceBreak: 101 },
       true,
     );
     expect(alerts.map((a) => a.id)).toEqual(['drivingSinceBreak']);
@@ -74,6 +97,7 @@ describe('buildTimerAlerts', () => {
   it('keeps break-due-soon ahead of a same-severity counter warning', () => {
     const alerts = buildTimerAlerts(
       { ...NO_WARNINGS, drivingSinceBreak: 'warning' },
+      { ...NO_PERCENTS, drivingSinceBreak: 92 },
       true,
     );
     expect(alerts.map((a) => a.id)).toEqual([

@@ -27,24 +27,24 @@
     "warnings": {
       "breakDueSoon": "Przerwa za 30 min",
       "drivingSinceBreak": {
-        "info": "Przejechano 75% czasu przed przerwą",
-        "warning": "Wkrótce wymagana przerwa",
-        "danger": "Obowiązkowa przerwa teraz"
+        "info": "Przejechano {{percent}}% czasu przed przerwą",
+        "warning": "Wkrótce wymagana przerwa ({{percent}}%)",
+        "danger": "Obowiązkowa przerwa teraz ({{percent}}%)"
       },
       "dailyDriving": {
-        "info": "75% dziennego limitu jazdy",
-        "warning": "Dzienny limit jazdy prawie wyczerpany",
-        "danger": "Dzienny limit jazdy osiągnięty"
+        "info": "{{percent}}% dziennego limitu jazdy",
+        "warning": "Dzienny limit jazdy prawie wyczerpany ({{percent}}%)",
+        "danger": "Dzienny limit jazdy osiągnięty ({{percent}}%)"
       },
       "weeklyDriving": {
-        "info": "75% tygodniowego limitu jazdy",
-        "warning": "Tygodniowy limit jazdy prawie wyczerpany",
-        "danger": "Tygodniowy limit jazdy osiągnięty"
+        "info": "{{percent}}% tygodniowego limitu jazdy",
+        "warning": "Tygodniowy limit jazdy prawie wyczerpany ({{percent}}%)",
+        "danger": "Tygodniowy limit jazdy osiągnięty ({{percent}}%)"
       },
       "biweeklyDriving": {
-        "info": "75% dwutygodniowego limitu jazdy",
-        "warning": "Dwutygodniowy limit jazdy prawie wyczerpany",
-        "danger": "Dwutygodniowy limit jazdy osiągnięty"
+        "info": "{{percent}}% dwutygodniowego limitu jazdy",
+        "warning": "Dwutygodniowy limit jazdy prawie wyczerpany ({{percent}}%)",
+        "danger": "Dwutygodniowy limit jazdy osiągnięty ({{percent}}%)"
       }
     }
   },
