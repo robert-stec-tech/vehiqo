@@ -16,9 +16,9 @@
     },
     "counters": {
       "sinceBreak": "Since break",
-      "daily": "Daily driving",
-      "weekly": "Weekly driving",
-      "biweekly": "Two-week driving"
+      "daily": "Day",
+      "weekly": "Week",
+      "biweekly": "2 weeks"
     },
     "currentMode": "Current mode",
     "noMode": "No mode selected",

@@ -16,9 +16,9 @@
     },
     "counters": {
       "sinceBreak": "Od przerwy",
-      "daily": "Jazda dzienna",
-      "weekly": "Jazda tygodniowa",
-      "biweekly": "Jazda dwutygodniowa"
+      "daily": "Dzień",
+      "weekly": "Tydzień",
+      "biweekly": "2 tyg."
     },
     "currentMode": "Aktualny tryb",
     "noMode": "Nie wybrano trybu",

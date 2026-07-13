@@ -3,6 +3,11 @@ import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AlertBanner, Card, ModeButton, Text } from '@/components';
+import {
+  MAX_BIWEEKLY_DRIVING_MS,
+  MAX_DAILY_DRIVING_REGULAR_MS,
+  MAX_WEEKLY_DRIVING_MS,
+} from '@/constants/euRegulations';
 import type { WorkMode } from '@/db/types';
 import { useDangerVibration } from '@/hooks/useDangerVibration';
 import { useWorkTimer } from '@/hooks/useWorkTimer';
@@ -70,30 +75,43 @@ export default function TimerScreen() {
             <Text variant="hero" className="mt-1">
               {formatDuration(counters.drivingSinceBreak)}
             </Text>
-
-            <View className="flex-row gap-4 mt-4">
-              <View className="flex-1">
-                <Text variant="caption">{t('workTimer.counters.daily')}</Text>
-                <Text variant="label">
-                  {formatDuration(counters.dailyDriving)}
-                </Text>
-              </View>
-              <View className="flex-1">
-                <Text variant="caption">{t('workTimer.counters.weekly')}</Text>
-                <Text variant="label">
-                  {formatDuration(counters.weeklyDriving)}
-                </Text>
-              </View>
-              <View className="flex-1">
-                <Text variant="caption">
-                  {t('workTimer.counters.biweekly')}
-                </Text>
-                <Text variant="label">
-                  {formatDuration(counters.biweeklyDriving)}
-                </Text>
-              </View>
-            </View>
           </Card>
+
+          <View className="flex-row gap-3">
+            <Card className="flex-1">
+              <Text variant="caption" className="uppercase">
+                {t('workTimer.counters.daily')}
+              </Text>
+              <Text variant="heading" className="mt-1.5">
+                {formatDuration(counters.dailyDriving)}
+              </Text>
+              <Text variant="timestamp" className="mt-1">
+                / {formatDuration(MAX_DAILY_DRIVING_REGULAR_MS)}
+              </Text>
+            </Card>
+            <Card className="flex-1">
+              <Text variant="caption" className="uppercase">
+                {t('workTimer.counters.weekly')}
+              </Text>
+              <Text variant="heading" className="mt-1.5">
+                {formatDuration(counters.weeklyDriving)}
+              </Text>
+              <Text variant="timestamp" className="mt-1">
+                / {formatDuration(MAX_WEEKLY_DRIVING_MS)}
+              </Text>
+            </Card>
+            <Card className="flex-1">
+              <Text variant="caption" className="uppercase">
+                {t('workTimer.counters.biweekly')}
+              </Text>
+              <Text variant="heading" className="mt-1.5">
+                {formatDuration(counters.biweeklyDriving)}
+              </Text>
+              <Text variant="timestamp" className="mt-1">
+                / {formatDuration(MAX_BIWEEKLY_DRIVING_MS)}
+              </Text>
+            </Card>
+          </View>
 
           {alerts.length > 0 && (
             <View className="gap-3">
@@ -103,16 +121,16 @@ export default function TimerScreen() {
             </View>
           )}
 
-          <View className="gap-3">
-            <View className="flex-row gap-3">
-              {renderButton('driving')}
+          <View className="gap-2">
+            <View className="flex-row">{renderButton('driving')}</View>
+            <View className="flex-row gap-2">
               {renderButton('other_work')}
-            </View>
-            <View className="flex-row gap-3">
               {renderButton('standby')}
-              {renderButton('break')}
             </View>
-            <View className="flex-row gap-3">{renderButton('rest')}</View>
+            <View className="flex-row gap-2">
+              {renderButton('break')}
+              {renderButton('rest')}
+            </View>
           </View>
         </ScrollView>
       </SafeAreaView>
