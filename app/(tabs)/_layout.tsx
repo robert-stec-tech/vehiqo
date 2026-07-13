@@ -1,4 +1,4 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { Tabs } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 
@@ -12,7 +12,11 @@ export default function TabLayout() {
         options={{
           title: t('tabs.timer'),
           tabBarIcon: ({ color }) => (
-            <Ionicons name="timer-outline" size={24} color={color} />
+            <MaterialCommunityIcons
+              name="timer-outline"
+              size={24}
+              color={color}
+            />
           ),
         }}
       />
@@ -21,7 +25,11 @@ export default function TabLayout() {
         options={{
           title: t('tabs.dailyCheck'),
           tabBarIcon: ({ color }) => (
-            <Ionicons name="checkbox-outline" size={24} color={color} />
+            <MaterialCommunityIcons
+              name="clipboard-check-outline"
+              size={24}
+              color={color}
+            />
           ),
         }}
       />
@@ -30,7 +38,11 @@ export default function TabLayout() {
         options={{
           title: t('tabs.fatigue'),
           tabBarIcon: ({ color }) => (
-            <Ionicons name="battery-half-outline" size={24} color={color} />
+            <MaterialCommunityIcons
+              name="head-alert-outline"
+              size={24}
+              color={color}
+            />
           ),
         }}
       />
@@ -39,7 +51,11 @@ export default function TabLayout() {
         options={{
           title: t('tabs.map'),
           tabBarIcon: ({ color }) => (
-            <Ionicons name="map-outline" size={24} color={color} />
+            <MaterialCommunityIcons
+              name="map-outline"
+              size={24}
+              color={color}
+            />
           ),
         }}
       />
@@ -48,7 +64,11 @@ export default function TabLayout() {
         options={{
           title: t('tabs.settings'),
           tabBarIcon: ({ color }) => (
-            <Ionicons name="settings-outline" size={24} color={color} />
+            <MaterialCommunityIcons
+              name="cog-outline"
+              size={24}
+              color={color}
+            />
           ),
         }}
       />

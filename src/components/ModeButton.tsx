@@ -1,4 +1,4 @@
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { styled } from 'nativewind';
 import { Text, TouchableOpacity } from 'react-native';
 
@@ -13,9 +13,9 @@ interface ModeButtonProps {
 
 // styled() lets the icon take its color from a NativeWind class, so no color is
 // hardcoded outside global.css.
-const Icon = styled(Ionicons);
+const Icon = styled(MaterialCommunityIcons);
 
-type IconName = React.ComponentProps<typeof Ionicons>['name'];
+type IconName = React.ComponentProps<typeof MaterialCommunityIcons>['name'];
 
 // Status colors must stay identical in light and dark mode,
 // so they are applied unconditionally — not via the themed Text component.
@@ -68,11 +68,11 @@ const idleSurface =
   'bg-gray-100 dark:bg-night-elevated border-gray-300 dark:border-night-border';
 
 const modeIcon: Record<WorkMode, IconName> = {
-  driving: 'car-sport',
-  other_work: 'construct',
-  standby: 'time',
-  break: 'cafe',
-  rest: 'moon',
+  driving: 'truck-outline',
+  other_work: 'wrench',
+  standby: 'eye-outline',
+  break: 'coffee',
+  rest: 'bed',
 };
 
 export function ModeButton({
