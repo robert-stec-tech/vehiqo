@@ -1,6 +1,7 @@
 import '../global.css';
 import '@/i18n';
 
+import { DarkTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
@@ -34,5 +35,9 @@ export default function RootLayout() {
 
   if (!ready) return null;
 
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <ThemeProvider value={DarkTheme}>
+      <Stack screenOptions={{ headerShown: false }} />
+    </ThemeProvider>
+  );
 }
