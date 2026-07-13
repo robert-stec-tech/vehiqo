@@ -15,37 +15,48 @@ interface ModeButtonProps {
 // class strings at build time.
 const modeColor: Record<
   WorkMode,
-  { border: string; text: string; bgSelected: string; bgIdle: string }
+  {
+    border: string;
+    bgSelected: string;
+    bgIdle: string;
+    textSelected: string;
+    textIdle: string;
+  }
 > = {
   driving: {
     border: 'border-driving',
-    text: 'text-driving',
-    bgSelected: 'bg-driving/40',
+    bgSelected: 'bg-driving',
     bgIdle: 'bg-driving/10',
+    textSelected: 'text-night',
+    textIdle: 'text-driving',
   },
   other_work: {
     border: 'border-other-work',
-    text: 'text-other-work',
-    bgSelected: 'bg-other-work/40',
+    bgSelected: 'bg-other-work',
     bgIdle: 'bg-other-work/10',
+    textSelected: 'text-night',
+    textIdle: 'text-other-work',
   },
   standby: {
     border: 'border-standby',
-    text: 'text-standby',
-    bgSelected: 'bg-standby/40',
+    bgSelected: 'bg-standby',
     bgIdle: 'bg-standby/10',
+    textSelected: 'text-night',
+    textIdle: 'text-standby',
   },
   break: {
     border: 'border-break',
-    text: 'text-break',
-    bgSelected: 'bg-break/40',
+    bgSelected: 'bg-break',
     bgIdle: 'bg-break/10',
+    textSelected: 'text-night',
+    textIdle: 'text-break',
   },
   rest: {
     border: 'border-rest',
-    text: 'text-rest',
-    bgSelected: 'bg-rest/40',
+    bgSelected: 'bg-rest',
     bgIdle: 'bg-rest/10',
+    textSelected: 'text-night',
+    textIdle: 'text-rest',
   },
 };
 
@@ -63,7 +74,11 @@ export function ModeButton({
       accessibilityRole="button"
       accessibilityState={{ selected }}
     >
-      <Text className={`text-lg font-bold uppercase ${c.text}`}>{label}</Text>
+      <Text
+        className={`text-lg font-bold uppercase ${selected ? c.textSelected : c.textIdle}`}
+      >
+        {label}
+      </Text>
     </TouchableOpacity>
   );
 }
