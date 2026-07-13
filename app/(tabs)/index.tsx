@@ -77,7 +77,7 @@ export default function TimerScreen() {
               <View
                 className={`w-2.5 h-2.5 rounded-full ${currentMode ? modeDot[currentMode] : 'bg-ink-muted'}`}
               />
-              <Text variant="caption" className="uppercase">
+              <Text variant="eyebrow">
                 {t('workTimer.counters.sinceBreak')}
               </Text>
               <Text variant="caption" className="ml-auto">
@@ -102,7 +102,7 @@ export default function TimerScreen() {
 
           <View className="flex-row gap-3">
             <Card className="flex-1 gap-1.5">
-              <Text variant="caption" className="uppercase">
+              <Text variant="eyebrow">
                 {t('workTimer.counters.daily')}
               </Text>
               <Text variant="heading">
@@ -117,7 +117,7 @@ export default function TimerScreen() {
               </Text>
             </Card>
             <Card className="flex-1 gap-1.5">
-              <Text variant="caption" className="uppercase">
+              <Text variant="eyebrow">
                 {t('workTimer.counters.weekly')}
               </Text>
               <Text variant="heading">
@@ -132,7 +132,7 @@ export default function TimerScreen() {
               </Text>
             </Card>
             <Card className="flex-1 gap-1.5">
-              <Text variant="caption" className="uppercase">
+              <Text variant="eyebrow">
                 {t('workTimer.counters.biweekly')}
               </Text>
               <Text variant="heading">

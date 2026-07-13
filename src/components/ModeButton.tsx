@@ -92,7 +92,9 @@ export function ModeButton({
       accessibilityState={{ selected }}
     >
       <Icon name={modeIcon[mode]} size={20} className={color} />
-      <Text className={`text-sm font-bold uppercase ${color}`}>{label}</Text>
+      <Text className={`text-base font-extrabold uppercase ${color}`}>
+        {label}
+      </Text>
     </TouchableOpacity>
   );
 }

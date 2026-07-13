@@ -7,6 +7,7 @@ type TextVariant =
   | 'label'
   | 'body'
   | 'caption'
+  | 'eyebrow'
   | 'timestamp';
 
 interface AppTextProps extends TextProps {
@@ -21,6 +22,8 @@ const variantClasses: Record<TextVariant, string> = {
   label: 'text-lg font-semibold',
   body: 'text-base',
   caption: 'text-sm text-gray-500 dark:text-ink-muted',
+  eyebrow:
+    'text-sm font-extrabold uppercase tracking-wide text-gray-500 dark:text-ink-muted',
   timestamp: 'text-xs text-gray-500 dark:text-ink-muted',
 };
 
