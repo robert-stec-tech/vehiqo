@@ -13,7 +13,7 @@ export default function TabLayout() {
           title: t('tabs.timer'),
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons
-              name="timer-outline"
+              name="clock-outline"
               size={24}
               color={color}
             />
