@@ -34,12 +34,12 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="fatigue"
+        name="map"
         options={{
-          title: t('tabs.fatigue'),
+          title: t('tabs.map'),
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons
-              name="head-alert-outline"
+              name="map-outline"
               size={24}
               color={color}
             />
@@ -47,12 +47,12 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="map"
+        name="fatigue"
         options={{
-          title: t('tabs.map'),
+          title: t('tabs.fatigue'),
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons
-              name="map-outline"
+              name="head-alert-outline"
               size={24}
               color={color}
             />
