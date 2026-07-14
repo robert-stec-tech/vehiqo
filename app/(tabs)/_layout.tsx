@@ -1,12 +1,42 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { Tabs } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { useWindowDimensions } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+// Tab bar sizing props are plain numbers, not NativeWind classes, so the icon,
+// label, and bar height are scaled in JS here. Floors keep the current phone
+// look; the cap only grows the bar on large screens.
+function clampNum(min: number, preferred: number, max: number): number {
+  return Math.min(Math.max(preferred, min), max);
+}
 
 export default function TabLayout() {
   const { t } = useTranslation();
+  const { width, height } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
+
+  const iconSize = Math.round(
+    clampNum(24, Math.min(width * 0.06, height * 0.04), 32),
+  );
+  const labelFontSize = Math.round(iconSize * (10 / 24));
+  // @react-navigation's icon wrapper is a fixed 31×28 box — grow it or the glyph
+  // bleeds into the label. Never use tabBarItemStyle padding: it sits outside the
+  // pressable, inflating the item past the bar height and clipping the label.
+  const iconBoxHeight = iconSize + 4;
+  const barContentHeight = Math.round(
+    clampNum(49, iconBoxHeight + labelFontSize * 1.2 + 10, 68),
+  );
 
   return (
-    <Tabs screenOptions={{ headerShown: false }}>
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarLabelStyle: { fontSize: labelFontSize },
+        tabBarIconStyle: { width: iconSize, height: iconBoxHeight },
+        tabBarStyle: { height: barContentHeight + insets.bottom },
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
@@ -14,7 +44,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons
               name="clock-outline"
-              size={24}
+              size={iconSize}
               color={color}
             />
           ),
@@ -27,7 +57,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons
               name="clipboard-check-outline"
-              size={24}
+              size={iconSize}
               color={color}
             />
           ),
@@ -40,7 +70,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons
               name="map-outline"
-              size={24}
+              size={iconSize}
               color={color}
             />
           ),
@@ -53,7 +83,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons
               name="head-alert-outline"
-              size={24}
+              size={iconSize}
               color={color}
             />
           ),
@@ -66,7 +96,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons
               name="cog-outline"
-              size={24}
+              size={iconSize}
               color={color}
             />
           ),
