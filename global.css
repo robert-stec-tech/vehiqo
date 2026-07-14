@@ -4,6 +4,20 @@
 
 @import 'nativewind/theme';
 
+/* react-native-web root reset — without it the flex-1 tree has no height to
+   fill and the page renders blank. No-op on native, no matching elements there. */
+html,
+body,
+#root {
+  height: 100%;
+}
+body {
+  overflow: hidden;
+}
+#root {
+  display: flex;
+}
+
 @theme {
   /* Brand accent — electric blue */
   --color-brand: #24abe8;
@@ -38,7 +52,12 @@
   --color-ink-muted: #8e929a;
 
   /* Hero timer — the single most important number on screen, sized well above
-     the default scale so it reads at a glance from the dashboard. */
+     the default scale so it reads at a glance from the dashboard.
+     Fixed size on purpose: CSS clamp()+vw/vh does NOT resolve reliably in
+     react-native-css on native (a nested min() gets filtered to undefined →
+     no fontSize → tiny text on a real phone), even though it works in the web
+     preview. Any large-screen scaling must be done in JS (useWindowDimensions),
+     never via CSS clamp in this project. */
   --text-hero: 4.625rem;
   --text-hero--line-height: 0.9;
 }

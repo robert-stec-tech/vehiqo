@@ -1,27 +1,77 @@
 import {
   DAILY_REST_REDUCED_MS,
+  DRIVING_BEFORE_BREAK_MS,
   WEEKLY_REST_REDUCED_MS,
 } from '@/constants/euRegulations';
 import { generateId } from '@/utils/id';
 
-import { getDatabase } from './index';
+import { getDatabase, WebDatabaseUnavailableError } from './index';
 import type { WorkMode, WorkSession } from './types';
 
+// Only the web preview can lack a database; read queries then fall back to a
+// UI-only state so the browser still renders. Native always has SQLite, so this
+// never fires there.
+function isDbUnavailable(e: unknown): e is WebDatabaseUnavailableError {
+  return e instanceof WebDatabaseUnavailableError;
+}
+
+// Dev-only preview aid: with no persistence on web the counters would sit at
+// zero and never trip a warning, so seed an in-progress driving session at 95%
+// of the pre-break limit (the "warning" band) to make the alert banner visible
+// while eyeballing the UI. Gated on __DEV__ so no production build can ship it.
+function buildWebDemoDrivingSession(): WorkSession | null {
+  if (!__DEV__) return null;
+  const startedAt = Date.now() - Math.round(DRIVING_BEFORE_BREAK_MS * 0.95);
+  return {
+    id: 'web-demo-driving',
+    mode: 'driving',
+    started_at: startedAt,
+    ended_at: null,
+    created_at: startedAt,
+    updated_at: startedAt,
+    synced_at: null,
+  };
+}
+
 export async function getCurrentWorkSession(): Promise<WorkSession | null> {
-  const db = await getDatabase();
-  const row = await db.getFirstAsync<WorkSession>(
-    `SELECT * FROM work_sessions
-     WHERE ended_at IS NULL
-     ORDER BY started_at DESC
-     LIMIT 1;`,
-  );
-  return row ?? null;
+  try {
+    const db = await getDatabase();
+    const row = await db.getFirstAsync<WorkSession>(
+      `SELECT * FROM work_sessions
+       WHERE ended_at IS NULL
+       ORDER BY started_at DESC
+       LIMIT 1;`,
+    );
+    return row ?? null;
+  } catch (e) {
+    if (isDbUnavailable(e)) return buildWebDemoDrivingSession();
+    throw e;
+  }
 }
 
 export async function startWorkSession(mode: WorkMode): Promise<WorkSession> {
-  const db = await getDatabase();
   const now = Date.now();
   const id = generateId();
+
+  let db: Awaited<ReturnType<typeof getDatabase>>;
+  try {
+    db = await getDatabase();
+  } catch (e) {
+    // Web preview without persistence: return an in-memory session so mode
+    // switching still updates the UI. Nothing is saved — native persists.
+    if (isDbUnavailable(e)) {
+      return {
+        id,
+        mode,
+        started_at: now,
+        ended_at: null,
+        created_at: now,
+        updated_at: now,
+        synced_at: null,
+      };
+    }
+    throw e;
+  }
 
   await db.withTransactionAsync(async () => {
     const prev = await db.getFirstAsync<{ mode: WorkMode; started_at: number }>(
@@ -88,15 +138,23 @@ export async function getWorkSessionsInRange(
   from: number,
   to: number,
 ): Promise<WorkSession[]> {
-  const db = await getDatabase();
-  return db.getAllAsync<WorkSession>(
-    `SELECT * FROM work_sessions
-     WHERE started_at < ?
-       AND (ended_at > ? OR ended_at IS NULL)
-     ORDER BY started_at ASC;`,
-    to,
-    from,
-  );
+  try {
+    const db = await getDatabase();
+    return await db.getAllAsync<WorkSession>(
+      `SELECT * FROM work_sessions
+       WHERE started_at < ?
+         AND (ended_at > ? OR ended_at IS NULL)
+       ORDER BY started_at ASC;`,
+      to,
+      from,
+    );
+  } catch (e) {
+    if (isDbUnavailable(e)) {
+      const demo = buildWebDemoDrivingSession();
+      return demo ? [demo] : [];
+    }
+    throw e;
+  }
 }
 
 export interface WorkTimerSettings {
@@ -105,19 +163,26 @@ export interface WorkTimerSettings {
 }
 
 export async function getWorkTimerSettings(): Promise<WorkTimerSettings> {
-  const db = await getDatabase();
-  const rows = await db.getAllAsync<{ key: string; value: string }>(
-    `SELECT key, value FROM app_settings
-     WHERE key IN ('last_daily_rest_end', 'last_weekly_rest_end');`,
-  );
+  try {
+    const db = await getDatabase();
+    const rows = await db.getAllAsync<{ key: string; value: string }>(
+      `SELECT key, value FROM app_settings
+       WHERE key IN ('last_daily_rest_end', 'last_weekly_rest_end');`,
+    );
 
-  const readTimestamp = (key: string): number | null => {
-    const row = rows.find((r) => r.key === key);
-    return row ? Number(row.value) : null;
-  };
+    const readTimestamp = (key: string): number | null => {
+      const row = rows.find((r) => r.key === key);
+      return row ? Number(row.value) : null;
+    };
 
-  return {
-    lastDailyRestEnd: readTimestamp('last_daily_rest_end'),
-    lastWeeklyRestEnd: readTimestamp('last_weekly_rest_end'),
-  };
+    return {
+      lastDailyRestEnd: readTimestamp('last_daily_rest_end'),
+      lastWeeklyRestEnd: readTimestamp('last_weekly_rest_end'),
+    };
+  } catch (e) {
+    if (isDbUnavailable(e)) {
+      return { lastDailyRestEnd: null, lastWeeklyRestEnd: null };
+    }
+    throw e;
+  }
 }
