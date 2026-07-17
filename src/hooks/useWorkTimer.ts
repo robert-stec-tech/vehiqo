@@ -15,6 +15,12 @@ import {
 } from '@/db/queries';
 import type { WorkMode, WorkSession } from '@/db/types';
 import { getWarningLevel, type WarningLevel } from '@/utils/compliance';
+import {
+  getDayBounds,
+  getDaySegments,
+  type DayBounds,
+  type DaySegment,
+} from '@/utils/dayTimeline';
 import { getDrivingSinceLastBreak, sumModeTimeInRange } from '@/utils/workTime';
 import {
   buildTimerAlerts,
@@ -47,6 +53,8 @@ export interface UseWorkTimerReturn {
   alerts: TimerAlert[];
   isBreakDueSoon: boolean;
   isLoading: boolean;
+  todayBounds: DayBounds;
+  todaySegments: DaySegment[];
   switchMode: (mode: WorkMode) => Promise<void>;
 }
 
@@ -165,6 +173,12 @@ export function useWorkTimer(): UseWorkTimerReturn {
     [warnings, percents, isBreakDueSoon],
   );
 
+  const todayBounds = useMemo(() => getDayBounds(now), [now]);
+  const todaySegments = useMemo(
+    () => getDaySegments(sessions, todayBounds.dayStart, todayBounds.dayEnd, now),
+    [sessions, todayBounds, now],
+  );
+
   const switchMode = useCallback(
     async (mode: WorkMode) => {
       const newSession = await startWorkSession(mode);
@@ -199,6 +213,8 @@ export function useWorkTimer(): UseWorkTimerReturn {
     alerts,
     isBreakDueSoon,
     isLoading,
+    todayBounds,
+    todaySegments,
     switchMode,
   };
 }
