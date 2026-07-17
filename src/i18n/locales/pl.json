@@ -20,6 +20,9 @@
       "weekly": "Tydzień",
       "biweekly": "2 tyg."
     },
+    "dayTimeline": {
+      "title": "Dziś"
+    },
     "currentMode": "Aktualny tryb",
     "noMode": "Nie wybrano trybu",
     "breakRemaining": "{{time}} do obowiązkowej przerwy",

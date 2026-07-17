@@ -20,6 +20,9 @@
       "weekly": "Week",
       "biweekly": "2 weeks"
     },
+    "dayTimeline": {
+      "title": "Today"
+    },
     "currentMode": "Current mode",
     "noMode": "No mode selected",
     "breakRemaining": "{{time}} until a mandatory break",
