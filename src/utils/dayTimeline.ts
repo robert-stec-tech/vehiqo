@@ -26,3 +26,16 @@ export function getDaySegments(
   }
   return segments.sort((a, b) => a.start - b.start);
 }
+
+export interface DayBounds {
+  dayStart: number;
+  dayEnd: number;
+}
+
+// Local-calendar-day window containing `now`, for the daily timeline chart.
+export function getDayBounds(now: number): DayBounds {
+  const start = new Date(now);
+  start.setHours(0, 0, 0, 0);
+  const dayStart = start.getTime();
+  return { dayStart, dayEnd: dayStart + 24 * 60 * 60 * 1000 };
+}

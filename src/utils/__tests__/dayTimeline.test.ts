@@ -1,5 +1,5 @@
 import type { WorkMode, WorkSession } from '@/db/types';
-import { getDaySegments } from '@/utils/dayTimeline';
+import { getDayBounds, getDaySegments } from '@/utils/dayTimeline';
 
 function session(
   mode: WorkMode,
@@ -92,5 +92,22 @@ describe('getDaySegments', () => {
       NOW,
     );
     expect(segments.map((s) => s.mode)).toEqual(['driving', 'break', 'rest']);
+  });
+});
+
+describe('getDayBounds', () => {
+  it('returns local midnight to midnight spanning 24 hours', () => {
+    const now = new Date(2026, 5, 15, 14, 30, 0).getTime();
+    const { dayStart, dayEnd } = getDayBounds(now);
+
+    expect(new Date(dayStart)).toEqual(new Date(2026, 5, 15, 0, 0, 0, 0));
+    expect(dayEnd - dayStart).toBe(24 * 60 * 60 * 1000);
+  });
+
+  it('gives the same bounds for any time within the same day', () => {
+    const morning = new Date(2026, 5, 15, 0, 0, 1).getTime();
+    const night = new Date(2026, 5, 15, 23, 59, 59).getTime();
+
+    expect(getDayBounds(morning)).toEqual(getDayBounds(night));
   });
 });
