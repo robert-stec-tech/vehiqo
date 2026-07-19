@@ -23,15 +23,17 @@ body {
   --color-brand: #24abe8;
   --color-brand-dark: #0091ce;
 
-  /* Work mode statuses — distinguishable by hue alone, identical in light and
-     dark. Red and amber are reserved exclusively for alerts. */
-  --color-driving: #5ac576;
-  --color-other-work: #5b9df0;
-  --color-standby: #db7cd4;
-  --color-break: #4cdbe3;
-  --color-rest: #8c91d5;
+  /* Work mode statuses — five vivid hues spread around the wheel so they read
+     apart at a glance in dark mode; kept at similar lightness/saturation so no
+     one mode looks washed out next to the others. */
+  --color-driving: #1e824c;
+  --color-other-work: #d35400;
+  --color-standby: #9db82c;
+  --color-break: #3b82f6;
+  --color-rest: #8e44ad;
 
-  /* Alerts — three escalating levels */
+  /* Alerts — info/warning/danger escalate in that order; success is a
+     separate confirmation color, not part of the escalation. */
   --color-info: #24abe8;
   --color-warning: #e3c23b;
   --color-danger: #e64343;
