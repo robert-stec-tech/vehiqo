@@ -4,6 +4,7 @@ import { ScrollView, View } from 'react-native';
 import {
   AlertBanner,
   Card,
+  DayTimelineBar,
   ModeButton,
   ProgressBar,
   ScreenContainer,
@@ -32,8 +33,15 @@ const modeDot: Record<WorkMode, string> = {
 
 export default function TimerScreen() {
   const { t } = useTranslation();
-  const { currentMode, counters, alerts, isLoading, switchMode } =
-    useWorkTimer();
+  const {
+    currentMode,
+    counters,
+    alerts,
+    isLoading,
+    todayBounds,
+    todaySegments,
+    switchMode,
+  } = useWorkTimer();
 
   useDangerVibration(alerts);
 
@@ -152,6 +160,8 @@ export default function TimerScreen() {
             </Text>
           </Card>
         </View>
+
+        <DayTimelineBar segments={todaySegments} bounds={todayBounds} />
       </ScrollView>
 
       <View className="gap-2 px-4 pb-4 pt-4">
