@@ -16,10 +16,10 @@ import {
 import type { WorkMode, WorkSession } from '@/db/types';
 import { getWarningLevel, type WarningLevel } from '@/utils/compliance';
 import {
-  getDayBounds,
-  getDaySegments,
   type DayBounds,
   type DaySegment,
+  getDayBounds,
+  getDaySegments,
 } from '@/utils/dayTimeline';
 import { getDrivingSinceLastBreak, sumModeTimeInRange } from '@/utils/workTime';
 import {
