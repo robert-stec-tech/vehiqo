@@ -157,6 +157,22 @@ export async function getWorkSessionsInRange(
   }
 }
 
+// Dev-only reset: wipes every locally stored row. Deletes through the already
+// open connection rather than dropping the database file — deleting the file
+// would leave the cached handle in db/index.ts pointing at a database that no
+// longer exists, breaking every query until a full app restart. Children are
+// cleared before parents so the order never depends on ON DELETE CASCADE.
+export async function clearAllLocalData(): Promise<void> {
+  const db = await getDatabase();
+  await db.withTransactionAsync(async () => {
+    await db.runAsync('DELETE FROM daily_check_items;');
+    await db.runAsync('DELETE FROM daily_checks;');
+    await db.runAsync('DELETE FROM fatigue_sessions;');
+    await db.runAsync('DELETE FROM work_sessions;');
+    await db.runAsync('DELETE FROM app_settings;');
+  });
+}
+
 export interface WorkTimerSettings {
   lastDailyRestEnd: number | null;
   lastWeeklyRestEnd: number | null;
