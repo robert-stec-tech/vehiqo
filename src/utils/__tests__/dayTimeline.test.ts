@@ -1,5 +1,5 @@
 import type { WorkMode, WorkSession } from '@/db/types';
-import { getDayBounds, getDaySegments } from '@/utils/dayTimeline';
+import { getDayBounds, getDaySegments, getWeekStart } from '@/utils/dayTimeline';
 
 function session(
   mode: WorkMode,
@@ -109,5 +109,36 @@ describe('getDayBounds', () => {
     const night = new Date(2026, 5, 15, 23, 59, 59).getTime();
 
     expect(getDayBounds(morning)).toEqual(getDayBounds(night));
+  });
+});
+
+// 2026-06-15 is a Monday, so that calendar week runs 15 Jun – 21 Jun.
+describe('getWeekStart', () => {
+  const MONDAY_MIDNIGHT = new Date(2026, 5, 15, 0, 0, 0, 0);
+
+  it('returns local Monday midnight for a midweek moment', () => {
+    const wednesday = new Date(2026, 5, 17, 14, 30, 0).getTime();
+
+    expect(new Date(getWeekStart(wednesday))).toEqual(MONDAY_MIDNIGHT);
+  });
+
+  it('returns the same day when already Monday', () => {
+    const monday = new Date(2026, 5, 15, 9, 0, 0).getTime();
+
+    expect(new Date(getWeekStart(monday))).toEqual(MONDAY_MIDNIGHT);
+  });
+
+  it('treats Sunday as the last day of the week, not the first', () => {
+    const sunday = new Date(2026, 5, 21, 23, 59, 59).getTime();
+
+    expect(new Date(getWeekStart(sunday))).toEqual(MONDAY_MIDNIGHT);
+  });
+
+  it('gives the same start for every day within one week', () => {
+    const starts = [15, 16, 17, 18, 19, 20, 21].map((day) =>
+      getWeekStart(new Date(2026, 5, day, 12, 0, 0).getTime()),
+    );
+
+    expect(new Set(starts).size).toBe(1);
   });
 });

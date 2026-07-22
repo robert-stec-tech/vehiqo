@@ -73,13 +73,45 @@ describe('computeCounters — drivingSinceBreak', () => {
 });
 
 describe('computeCounters — dailyDriving', () => {
-  it('counts all driving when lastDailyRestEnd is null (fallback to 0)', () => {
+  // 2026-06-17 is a Wednesday, inside the Mon 15 – Sun 21 June calendar week.
+  const WED_NOON = new Date(2026, 5, 17, 12, 0, 0).getTime();
+
+  it('falls back to the start of the calendar day, not the epoch', () => {
     const sessions = [
-      session('driving', 2 * HOUR, 4 * HOUR),
-      session('driving', 6 * HOUR, 8 * HOUR),
+      session(
+        'driving',
+        new Date(2026, 5, 16, 9, 0, 0).getTime(),
+        new Date(2026, 5, 16, 14, 0, 0).getTime(),
+      ),
+      session(
+        'driving',
+        new Date(2026, 5, 17, 8, 0, 0).getTime(),
+        new Date(2026, 5, 17, 10, 0, 0).getTime(),
+      ),
     ];
-    const { dailyDriving } = computeCounters(sessions, 10 * HOUR, null, null);
-    expect(dailyDriving).toBe(4 * HOUR);
+    const { dailyDriving } = computeCounters(sessions, WED_NOON, null, null);
+    expect(dailyDriving).toBe(2 * HOUR);
+  });
+
+  it('clips a session that started before midnight to the current day', () => {
+    const sessions = [
+      session(
+        'driving',
+        new Date(2026, 5, 16, 22, 0, 0).getTime(),
+        new Date(2026, 5, 17, 3, 0, 0).getTime(),
+      ),
+    ];
+    const { dailyDriving } = computeCounters(sessions, WED_NOON, null, null);
+    expect(dailyDriving).toBe(3 * HOUR);
+  });
+
+  it('honours a recorded rest end that precedes midnight', () => {
+    const restEnd = new Date(2026, 5, 16, 20, 0, 0).getTime();
+    const sessions = [
+      session('driving', restEnd, new Date(2026, 5, 17, 1, 0, 0).getTime()),
+    ];
+    const { dailyDriving } = computeCounters(sessions, WED_NOON, restEnd, null);
+    expect(dailyDriving).toBe(5 * HOUR);
   });
 
   it('counts only driving after lastDailyRestEnd', () => {
@@ -124,10 +156,23 @@ describe('computeCounters — dailyDriving', () => {
 });
 
 describe('computeCounters — weeklyDriving', () => {
-  it('counts all driving when lastWeeklyRestEnd is null (fallback to 0)', () => {
-    const sessions = [session('driving', 0, 10 * HOUR)];
-    const { weeklyDriving } = computeCounters(sessions, 10 * HOUR, null, null);
-    expect(weeklyDriving).toBe(10 * HOUR);
+  it('falls back to the start of the calendar week, not the epoch', () => {
+    // Mon 15 Jun 2026 starts the week; the Sunday before it must be excluded.
+    const sessions = [
+      session(
+        'driving',
+        new Date(2026, 5, 14, 9, 0, 0).getTime(),
+        new Date(2026, 5, 14, 17, 0, 0).getTime(),
+      ),
+      session(
+        'driving',
+        new Date(2026, 5, 16, 9, 0, 0).getTime(),
+        new Date(2026, 5, 16, 13, 0, 0).getTime(),
+      ),
+    ];
+    const now = new Date(2026, 5, 17, 12, 0, 0).getTime();
+    const { weeklyDriving } = computeCounters(sessions, now, null, null);
+    expect(weeklyDriving).toBe(4 * HOUR);
   });
 
   it('weekly counter does not reset on calendar week boundary', () => {
@@ -163,26 +208,59 @@ describe('computeCounters — weeklyDriving', () => {
 });
 
 describe('computeCounters — biweeklyDriving', () => {
-  const TWO_WEEKS = 14 * 24 * HOUR;
+  // Weeks run Mon–Sun. For Wed 17 Jun 2026 the legal window is the current week
+  // (from Mon 15 Jun) plus the previous one (from Mon 8 Jun).
+  const WED_NOON = new Date(2026, 5, 17, 12, 0, 0).getTime();
 
-  it('counts only driving within the rolling 14-day window', () => {
-    const now = 20 * 24 * HOUR;
-    const windowStart = now - TWO_WEEKS;
+  it('spans the current and previous calendar week only', () => {
     const sessions = [
-      session('driving', 0, 24 * HOUR),
-      session('driving', windowStart + HOUR, windowStart + 6 * HOUR),
+      // Fri 5 Jun — two weeks back, outside the window.
+      session(
+        'driving',
+        new Date(2026, 5, 5, 9, 0, 0).getTime(),
+        new Date(2026, 5, 5, 16, 0, 0).getTime(),
+      ),
+      // Wed 10 Jun — previous week, inside.
+      session(
+        'driving',
+        new Date(2026, 5, 10, 9, 0, 0).getTime(),
+        new Date(2026, 5, 10, 15, 0, 0).getTime(),
+      ),
+      // Tue 16 Jun — current week, inside.
+      session(
+        'driving',
+        new Date(2026, 5, 16, 9, 0, 0).getTime(),
+        new Date(2026, 5, 16, 13, 0, 0).getTime(),
+      ),
     ];
-    const { biweeklyDriving } = computeCounters(sessions, now, null, null);
-    expect(biweeklyDriving).toBe(5 * HOUR);
+    const { biweeklyDriving } = computeCounters(sessions, WED_NOON, null, null);
+    expect(biweeklyDriving).toBe(10 * HOUR);
   });
 
-  it('clips a driving session that straddles the window start', () => {
-    const now = 20 * 24 * HOUR;
-    const windowStart = now - TWO_WEEKS;
+  it('excludes a rolling-14-day session that falls in a third week', () => {
+    // Wed 3 Jun is within 14 days of Wed 17 Jun, but belongs to the week of
+    // Mon 1 Jun — a third calendar week, so it must not count.
     const sessions = [
-      session('driving', windowStart - 2 * HOUR, windowStart + 3 * HOUR),
+      session(
+        'driving',
+        new Date(2026, 5, 3, 9, 0, 0).getTime(),
+        new Date(2026, 5, 3, 17, 0, 0).getTime(),
+      ),
     ];
-    const { biweeklyDriving } = computeCounters(sessions, now, null, null);
-    expect(biweeklyDriving).toBe(3 * HOUR);
+    const { biweeklyDriving } = computeCounters(sessions, WED_NOON, null, null);
+    expect(biweeklyDriving).toBe(0);
+  });
+
+  it('clips a session that straddles the window start', () => {
+    // Sun 7 Jun 22:00 → Mon 8 Jun 02:00; only the part from Monday counts.
+    const sessions = [
+      session(
+        'driving',
+        new Date(2026, 5, 7, 22, 0, 0).getTime(),
+        new Date(2026, 5, 8, 2, 0, 0).getTime(),
+      ),
+    ];
+    const { biweeklyDriving } = computeCounters(sessions, WED_NOON, null, null);
+    expect(biweeklyDriving).toBe(2 * HOUR);
   });
 });

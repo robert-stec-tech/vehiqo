@@ -20,6 +20,7 @@ import {
   type DaySegment,
   getDayBounds,
   getDaySegments,
+  getWeekStart,
 } from '@/utils/dayTimeline';
 import { getDrivingSinceLastBreak, sumModeTimeInRange } from '@/utils/workTime';
 import {
@@ -64,11 +65,18 @@ export function computeCounters(
   lastDailyRestEnd: number | null,
   lastWeeklyRestEnd: number | null,
 ): WorkTimerCounters {
-  const dailyStart = lastDailyRestEnd ?? 0;
-  const weeklyStart = lastWeeklyRestEnd ?? 0;
-  // EU art. 6(3): max 90h over any two consecutive calendar weeks.
-  // Approximated as a rolling 14-day window for V1.
-  const biweeklyStart = now - TWO_WEEKS_MS;
+  // Without a recorded rest end the window must still be bounded: falling back
+  // to 0 made the counter sum every driving session ever stored, so a fresh
+  // install with any history reported impossible totals (e.g. 138h "today").
+  // The calendar day/week is the natural floor — a real anchor, once a rest is
+  // recorded, may legitimately sit earlier (driving through midnight).
+  const dailyStart = lastDailyRestEnd ?? getDayBounds(now).dayStart;
+  const weeklyStart = lastWeeklyRestEnd ?? getWeekStart(now);
+  // EU art. 6(3): max 90h across two consecutive calendar weeks — the current
+  // week plus the previous one. A rolling 14-day span would reach into a third
+  // calendar week and overstate the total. Stepping back one millisecond from
+  // this week's Monday lands in the previous week, whose start we then take.
+  const biweeklyStart = getWeekStart(getWeekStart(now) - 1);
 
   return {
     drivingSinceBreak: getDrivingSinceLastBreak(sessions, now),

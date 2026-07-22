@@ -39,3 +39,14 @@ export function getDayBounds(now: number): DayBounds {
   const dayStart = start.getTime();
   return { dayStart, dayEnd: dayStart + 24 * 60 * 60 * 1000 };
 }
+
+// Start of the local calendar week containing `now`. EU 561/2006 defines a week
+// as Monday 00:00 – Sunday 24:00, so the week starts on Monday rather than on
+// JavaScript's default Sunday.
+export function getWeekStart(now: number): number {
+  const start = new Date(now);
+  start.setHours(0, 0, 0, 0);
+  const daysSinceMonday = (start.getDay() + 6) % 7;
+  start.setDate(start.getDate() - daysSinceMonday);
+  return start.getTime();
+}
